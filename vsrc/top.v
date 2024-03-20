@@ -6,9 +6,11 @@
  * 0x1: write 1 to reg1
  * 0x2: write 2 to reg2
  * 0x3: write reg1 + reg2 to reg3
- * 0x0: halt
+ * 0x4: write 0 to reg1
+ * 0x0: halt, set err if reg1 != 0.
  *
  * PC always points to the address of next instruction here.
+ * After reset, PC will be set to 0.
  */
 module top (
 	input	wire					clk,
@@ -64,10 +66,15 @@ module top (
 	always @(posedge clk) begin
 		if (~rst) begin
 			case (inst)
-				64'd0: halt <= 1'b1;
+				64'd0: begin
+					halt <= 1'b1;
+					if (regs[0] != 64'd0)
+						err <= 1'b1;
+				end
 				64'd1: regs[0] <= 64'd1;
 				64'd2: regs[1] <= 64'd2;
 				64'd3: regs[2] <= regs[0] + regs[1];
+				64'd4: regs[0] <= 64'd0;
 				default: err <= 1'b1;
 			endcase
 		end

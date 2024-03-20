@@ -5,7 +5,7 @@ std::set<uint64_t> brks;
 
 static bool check_registers(void)
 {
-	if (cpu.pc == 32 && cpu.regs[0] == 1 && cpu.regs[1] == 2 & cpu.regs[2] == 3)
+	if (cpu.pc == 40 && cpu.regs[0] == 0 && cpu.regs[1] == 2 & cpu.regs[2] == 3)
 		return true;
 	return false;
 }

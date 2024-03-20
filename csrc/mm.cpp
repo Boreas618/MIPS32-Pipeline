@@ -10,10 +10,11 @@ void mm_init(void)
 {
 	memset(mem, 0, sizeof(mem));
 
-	mem[0] = 0x1;
-	mem[1] = 0x2;
-	mem[2] = 0x3;
-	mem[3] = 0x0;
+	mem[0] = 1;
+	mem[1] = 2;
+	mem[2] = 3;
+	mem[3] = 4;
+	mem[4] = 0;
 }
 
 static inline uint64_t guest_to_host(uint64_t addr)
