@@ -8,6 +8,7 @@ The following tutorial is based on Ubuntu 22.04.
 
 Install dependencies:
 ```bash
+sudo apt update
 sudo apt install build-essential verilator
 ```
 
