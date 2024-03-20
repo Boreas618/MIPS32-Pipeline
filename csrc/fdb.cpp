@@ -45,6 +45,7 @@ void fdb_start(void)
 		/* next */
 		case 'n':
 			cpu_exec_once();
+            // Some disassembling libraries may be helpful...
 			printf("0x%lx: 0x%lx\n", cpu.last_pc, cpu.last_inst);
 			break;
 		
