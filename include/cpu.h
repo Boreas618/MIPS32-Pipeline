@@ -1,0 +1,32 @@
+#ifndef __CPU_H__
+#define __CPU_H__
+
+#include <cstdint>
+#include <verilated.h>
+#include <verilated_dpi.h>
+
+#include <Vtop.h>
+#include <Vtop__Dpi.h>
+
+#include <stdint.h>
+
+typedef Vtop Vcpu;
+
+typedef struct {
+	uint64_t *regs;
+	uint64_t pc;
+	uint64_t halt;
+
+	uint64_t counter;
+	uint64_t last_pc;
+	uint64_t last_inst;
+	uint64_t err;
+} CPU;
+
+extern CPU cpu;
+
+void cpu_init(int argc, char *argv[]);
+void cpu_exec_once(void);
+void cpu_final(void);
+
+#endif // __CPU_H__
