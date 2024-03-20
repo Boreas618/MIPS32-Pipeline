@@ -2,7 +2,7 @@ default: all
 
 ROOT = $(abspath .)
 CSRCS = $(shell find $(ROOT)/csrc -name "*.c" -o -name "*.cpp" -o -name "*.cc")
-VSRCS = $(shell find $(ROOT)/vsrc -name "*.v")
+VSRCS = $(shell find $(ROOT)/vsrc -name "*.v" -o -name "*.sv")
 TOPNAME = top
 VERILATOR_FLAGS = -Wall --cc --exe --build --trace -O2 -Ivsrc
 CFLAGS += -I$(ROOT)/csrc -I$(ROOT)/csrc/include
