@@ -48,7 +48,7 @@ You can use `(system) verilog` or `chisel`.
 What's more, every instruction should have its corresponding test. Integration tests are also needed.
 You should load tests from `bin` or `elf` format files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
 
-An example in `tests` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries just like the example.
+An example in `tests` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries.
 
 You may want to improve the debugger, Makefile or anything else in this process.
 
