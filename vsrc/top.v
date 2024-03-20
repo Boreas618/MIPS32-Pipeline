@@ -10,7 +10,7 @@
  * 0x0: halt, set err if reg1 != 0.
  *
  * PC always points to the address of next instruction here.
- * After reset, PC will be set to 0.
+ * After reset, PC will be set to 0x1000.
  */
 module top (
 	input	wire					clk,
@@ -50,7 +50,7 @@ module top (
 	// Program counter
 	always @(posedge clk) begin
 		if (rst)
-			pc <= 64'd0;
+			pc <= 64'h1000;
 		else
 			pc <= pc + 64'd8;
 	end

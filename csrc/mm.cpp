@@ -2,7 +2,7 @@
 #include <string.h>
 
 #define MEM_SIZE 1024
-#define GUEST_BASE 0
+#define GUEST_BASE 0x1000
 
 uint64_t mem[MEM_SIZE];
 
