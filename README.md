@@ -43,7 +43,7 @@ make clean
 
 # Your mission
 Build a 5-stage pipelined `MIPS32` or `LoongArch32` CPU, which support every unpreviledged instruction that the contest requires.
-You can use `(system) verilog` or `chisel`.
+You can use `(system) verilog` or `chisel`. If you finish one of the extra tasks showed in the class PPT, you can get some bonus.
 
 What's more, every instruction should have its corresponding test. Integration tests are also needed.
 You should load tests from `bin` or `elf` format files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
