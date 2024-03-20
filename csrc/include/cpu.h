@@ -1,7 +1,6 @@
 #ifndef __CPU_H__
 #define __CPU_H__
 
-#include <cstdint>
 #include <verilated.h>
 #include <verilated_dpi.h>
 

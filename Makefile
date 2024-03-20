@@ -5,7 +5,7 @@ CSRCS = $(shell find $(ROOT)/csrc -name "*.c" -o -name "*.cpp" -o -name "*.cc")
 VSRCS = $(shell find $(ROOT)/vsrc -name "*.v")
 TOPNAME = top
 VERILATOR_FLAGS = -Wall --cc --exe --build --trace -O2 -Ivsrc
-CFLAGS += -I$(ROOT)/csrc -I$(ROOT)/include
+CFLAGS += -I$(ROOT)/csrc -I$(ROOT)/csrc/include
 CFLAGS += $(shell llvm-config --cxxflags) -fPIE
 
 BUILD_DIR = $(ROOT)/build

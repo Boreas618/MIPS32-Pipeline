@@ -1,0 +1,7 @@
+[*.{c,cc,cpp}]
+indent_style = tab
+indent_size = 8
+
+[*.v]
+indent_style = tab
+indent_size = 4
