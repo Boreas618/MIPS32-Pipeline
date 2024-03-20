@@ -6,7 +6,6 @@ VSRCS = $(shell find $(ROOT)/vsrc -name "*.v")
 TOPNAME = top
 VERILATOR_FLAGS = -Wall --cc --exe --build --trace -O2 -Ivsrc
 CFLAGS += -I$(ROOT)/csrc -I$(ROOT)/csrc/include
-CFLAGS += $(shell llvm-config --cxxflags) -fPIE
 
 BUILD_DIR = $(ROOT)/build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
