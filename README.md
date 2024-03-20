@@ -1,7 +1,7 @@
 # Introduction
 This project helps you to get started with Loongson Cup. 
 However, this tutorial is **not as detailed as** the original software lab.
-Most of the knowledge should be learned by yourself.
+Most of the knowledge should be **learned by yourself**.
 
 Please use **Linux** system. You can use either a virtual machine or docker.
 The following tutorial is based on Ubuntu 22.04.
