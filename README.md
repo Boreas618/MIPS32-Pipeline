@@ -81,7 +81,7 @@ An example in `tests` directory shows how to create `bin` format file on x86_64 
 
 You may want to improve the debugger, Makefile or anything else in this process.
 
-I am so lazy (and have no time) to do anything more, so welcome you to contribute to this project to help students of the next year.
+I am too lazy to do anything more, so welcome you to contribute to this project to help students of the next year.
 
 Good luck to you!
 
