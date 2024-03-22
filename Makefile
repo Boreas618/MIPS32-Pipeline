@@ -27,7 +27,7 @@ $(BIN): $(CSRCS) $(VSRCS)
 		-o $(abspath $(BIN)) --Mdir $(OBJ_DIR)
 
 run: $(BIN)
-	@ARCH=$(ARCH) $(BIN) $(IMG)
+	@ARCH=$(ARCH) $(BIN)
 
 clean:
 	@$(RM) -rf $(BUILD_DIR)

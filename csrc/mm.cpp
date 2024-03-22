@@ -10,8 +10,8 @@ void mm_init(void)
 {
 	memset(mem, 0, sizeof(mem));
 
-	// Instructions are put in the memory in advance
-	// You should not do things like me.
+	// Instructions are put in the memory in advance.
+	// You should not follow me.
 	mem[0] = 1;
 	mem[1] = 2;
 	mem[2] = 3;

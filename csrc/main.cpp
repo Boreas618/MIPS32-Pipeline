@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-char logo[] =
+static char logo[] =
 	"  _____ ____                    \n"
 	" |  ___|  _ \\  ___ _ __  _   _  \n"
 	" | |_  | | | |/ __| '_ \\| | | | \n"
