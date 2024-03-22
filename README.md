@@ -9,7 +9,30 @@ The following tutorial is based on Ubuntu 22.04.
 Install dependencies:
 ```bash
 sudo apt update
-sudo apt install build-essential verilator
+sudo apt install build-essential verilator git
+```
+
+If you choose MIPS:
+```bash
+sudo apt install llvm-dev
+```
+
+If you choose LoongArch (MIPS chooser can also do this instead of using `apt` if you like):
+```bash
+sudo apt install cmake
+git clone --depth 1 https://github.com/llvm/llvm-project.git
+cd llvm-project
+mkdir build
+cd build
+cmake ../llvm -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+cmake --build . --target install
+```
+
+Get the project:
+```bash
+git clone https://gitee.com/lsc2001/fdcpu.git
+cd fdcpu
 ```
 
 Compile the project:
@@ -21,8 +44,10 @@ Run the project:
 ```bash
 make run
 ```
+
 Now you can see this:
 ```
+You are using dummy ISA...
   _____ ____
  |  ___|  _ \  ___ _ __  _   _
  | |_  | | | |/ __| '_ \| | | |
@@ -32,6 +57,7 @@ Now you can see this:
 FDU debugger start...
 (fdb)
 ```
+
 You can try `n, r, b, p, q` to control the debugger, very similar to gdb.
 We prepared a very simple CPU with a very simple self-defined ISA to show you how to use verilator, you can find it in `vsrc/top.v`.
 
@@ -41,16 +67,21 @@ To clean compiled files:
 make clean
 ```
 
+**Note:** After you convert the ISA to `MIPS32` or `LoongArch32`,
+change `ARCH` to `mips` or `loongarch` in the Makefile.
+
 # Your mission
-Build a 5-stage pipelined `MIPS32` or `LoongArch32` CPU, which support every unpreviledged instruction that the contest requires.
+Build a 5-stage pipelined `MIPS32` or `LoongArch32` **little-endian** CPU, which support every unpreviledged instruction that the contest requires.
 You can use `(system) verilog` or `chisel`. If you finish one of the extra tasks showed in the class PPT, you can get some bonus.
 
 What's more, every instruction should have its corresponding test. Integration tests are also needed.
-You should load tests from `bin` or `elf` format files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
+You should load tests from `bin` files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
 
 An example in `tests` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries.
 
 You may want to improve the debugger, Makefile or anything else in this process.
+
+I am so lazy (and have no time) to do anything more, so welcome you to contribute to this project to help students of the next year.
 
 Good luck to you!
 

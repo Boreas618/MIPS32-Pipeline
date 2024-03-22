@@ -1,6 +1,8 @@
-#include <stdio.h>
+#include <fdb.h>
 #include <cpu.h>
 #include <mm.h>
+
+#include <stdio.h>
 
 char logo[] =
 	"  _____ ____                    \n"
@@ -10,13 +12,13 @@ char logo[] =
 	" |_|   |____/ \\___| .__/ \\__,_| \n"
 	"                  |_|           ";
 
-extern void fdb_start(void);
-
 static void system_init(int argc, char *argv[])
 {
-	printf("%s\n", logo);
 	mm_init();
 	cpu_init(argc, argv);
+	fdb_init();
+
+	printf("%s\n", logo);
 }
 
 static void system_exit(void)

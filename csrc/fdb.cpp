@@ -1,7 +1,31 @@
+#include "fdb.h"
 #include <cpu.h>
+#include <cstdint>
 #include <set>
+#include <utils.h>
 
+bool need_disasm = false;
 std::set<uint64_t> brks;
+
+void fdb_init(void)
+{
+	char *arch = NULL;
+	const char *triple = NULL;
+
+	arch = getenv("ARCH");
+	if (!strcmp(arch, "loongarch")) {
+		triple = "loongarch32-unknown-linux-gnu";
+		need_disasm = true;
+	} else if (!strcmp(arch, "mips")) {
+		triple = "mipsel-linux-gnu";
+		need_disasm = true;
+	} else if (strcmp(arch, "dummy"))
+		perror("ARCH should be in [dummy, mips, loongarch].\n");
+
+	printf("You are using %s ISA...\n", arch);
+	if (need_disasm)
+		disasm_init(triple);
+}
 
 static bool check_registers(void)
 {
@@ -32,6 +56,8 @@ static void fdb_print(void)
 
 void fdb_start(void)
 {
+	char buf[256];
+	uint8_t bytes[16];
 	char op;
 	uint64_t addr;
 
@@ -45,8 +71,14 @@ void fdb_start(void)
 		/* next */
 		case 'n':
 			cpu_exec_once();
-            // Some disassembling libraries may be helpful...
-			printf("0x%lx: 0x%lx\n", cpu.last_pc, cpu.last_inst);
+
+			if (need_disasm) {
+				*(uint64_t *)bytes = cpu.last_inst;
+				disassemble(buf, sizeof(buf), cpu.last_pc, bytes, sizeof(bytes));
+				printf("0x%lx: %s\n", cpu.last_pc, buf);
+			} else
+				printf("0x%lx: 0x%lx\n", cpu.last_pc, cpu.last_inst);
+
 			break;
 		
 		/* run */
@@ -73,19 +105,15 @@ void fdb_start(void)
 			printf("Unkown opcode.\n");
 		}
 
-		if (cpu.err) {
-			printf("Error happened.\n");
-			return;
-		}
+		if (cpu.err)
+			perror("Error happend in CPU.\n");
 	}
 
-	if (cpu.err) {
-		printf("Error happend.\n");
-		return;
-	}
+	if (cpu.err)
+		perror("Error happend in CPU.\n");
 
 	if (check_registers())
 		printf("Accepted.\n");
 	else
-	 	printf("Wrong Answer.\n");
+	 	perror("Wrong Answer.\n");
 }
