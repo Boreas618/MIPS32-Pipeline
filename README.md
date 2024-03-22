@@ -26,7 +26,7 @@ mkdir build
 cd build
 cmake ../llvm -DCMAKE_BUILD_TYPE=Release
 cmake --build .
-cmake --build . --target install
+sudo cmake --build . --target install
 ```
 
 Get the project:
