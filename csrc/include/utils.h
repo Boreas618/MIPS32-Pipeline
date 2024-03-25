@@ -2,8 +2,9 @@
 #define __UTILS_H__
 
 #include <stdint.h>
+#include <stdlib.h>
 
-#define perror(...) do { \
+#define perror_exit(...) do { \
 	fprintf(stderr, __VA_ARGS__); \
 	exit(1); \
 } while(0)

@@ -9,7 +9,7 @@ The following tutorial is based on Ubuntu 22.04.
 Install dependencies:
 ```bash
 sudo apt update
-sudo apt install build-essential verilator git
+sudo apt install build-essential verilator git python3
 ```
 
 If you choose MIPS:
@@ -57,13 +57,14 @@ You are using dummy ISA...
  |  _| | |_| | (__| |_) | |_| |
  |_|   |____/ \___| .__/ \__,_|
                   |_|
-FDU debugger start...
+Debug mode.
 (fdb)
 ```
 
 You can try `n, r, b, p, q` to control the debugger, very similar to gdb.
 We prepared a very simple CPU with a very simple self-defined ISA to show you how to use verilator, you can find it in `vsrc/top.v`.
 
+By default, it runs `tests/dummy.bin`. If you want to run with another image files, use `make run IMG=xxx` or change `IMG` in the Makefile.
 
 To clean compiled files:
 ```bash
@@ -82,7 +83,7 @@ So it will take you some time to adapt your codes to vivado and the real FPGA be
 Every instruction should have its corresponding test. Integration tests are also needed.
 You should load tests from `bin` files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
 
-An example in `tests` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries.
+An example in `tests/demo` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries.
 
 We don't distinguish lab1-labN and will judge your score based on what you've done according to the class PPT.
 If you finish one of the extra tasks, you can get some bonus.

@@ -1,24 +1,31 @@
 /* Memory management */
 
+#include <utils.h>
+
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #define MEM_SIZE 1024
 #define GUEST_BASE 0x1000
 
 uint64_t mem[MEM_SIZE];
 
-void mm_init(void)
+void mm_init(const char *img_name)
 {
+	FILE *fp;
+
 	memset(mem, 0, sizeof(mem));
 
-	// Instructions are put in the memory in advance.
-	// You should not follow me.
-	mem[0] = 1;
-	mem[1] = 2;
-	mem[2] = 3;
-	mem[3] = 4;
-	mem[4] = 0;
+	if (img_name != NULL) {
+		fp = fopen(img_name, "rb");
+		if (fp == NULL)
+			perror_exit("%s not found.\n", img_name);
+
+		// You should make it more robust.
+		fread(mem, sizeof(mem), 1, fp);
+		fclose(fp);
+	}
 }
 
 static inline uint64_t guest_to_host(uint64_t addr)

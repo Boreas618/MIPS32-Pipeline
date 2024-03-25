@@ -2,6 +2,7 @@ default: all
 
 # ARCH can be dummy, mips or loongarch
 ARCH = dummy
+IMG = $(abspath ./tests/dummy.bin)
 
 ROOT = $(abspath .)
 CSRCS = $(shell find $(ROOT)/csrc -name "*.c" -o -name "*.cpp" -o -name "*.cc")
@@ -27,7 +28,10 @@ $(BIN): $(CSRCS) $(VSRCS)
 		-o $(abspath $(BIN)) --Mdir $(OBJ_DIR)
 
 run: $(BIN)
-	@ARCH=$(ARCH) $(BIN)
+	@ARCH=$(ARCH) $(BIN) --debug $(IMG)
+
+test: $(BIN)
+	@ARCH=$(ARCH) python3 ./test.py $(BIN)
 
 clean:
 	@$(RM) -rf $(BUILD_DIR)
