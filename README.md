@@ -31,8 +31,11 @@ sudo cmake --build . --target install
 
 Get the project:
 ```bash
-git clone https://gitee.com/lsc2001/fdcpu.git
+# Please fork https://gitee.com/lsc2001/fdcpu.git first.
+git clone https://gitee.com/your_gitee_account/fdcpu.git
 cd fdcpu
+# All your modifications should be made on branch "lab".
+git checkout -b lab
 ```
 
 Compile the project:
@@ -87,6 +90,11 @@ You may want to improve the debugger, Makefile or anything else in this process.
 I am too lazy to do anything more, so welcome you to contribute to this project to help students of the next year.
 
 Good luck to you!
+
+# Submission
+To submit your code, upload the url of your git branch on e-learning (https://gitee.com/your_gitee_account/fdcpu/tree/lab).
+Your branch should also include a "your_student_number-your_name.md" (e.g., "12345-xxx.md"),
+which describe how to run and test your lab, and the design and evaluation of your lab.
 
 # Other things that may help
 ## How to ask questions
