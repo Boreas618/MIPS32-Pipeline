@@ -74,8 +74,7 @@ make clean
 change `ARCH` to `mips` or `loongarch` in the Makefile.
 
 # Your mission
-Build a 5-stage pipelined `MIPS32` or `LoongArch32` **little-endian** CPU, which support every unpreviledged instruction that the contest requires.
-You can use `(system) verilog` or `chisel`. If you finish one of the extra tasks showed in the class PPT, you can get some bonus.
+Build a 5-stage pipelined `MIPS32` or `LoongArch32` **little-endian** CPU, which support every unpreviledged instruction that the contest requires. You can use `(system) verilog` or `chisel`.
 
 You will use `verilator` to synthesize and simulate your RTL codes. However, in Loongson Cup you have to use vivado.
 So it will take you some time to adapt your codes to vivado and the real FPGA before the competition.
@@ -84,6 +83,9 @@ Every instruction should have its corresponding test. Integration tests are also
 You should load tests from `bin` files instead of putting them in the memory ahead of time, so that you can write some code to run tests one by one automatically.
 
 An example in `tests` directory shows how to create `bin` format file on x86_64 systems. MIPS and LoongArch are similar. Your tests should not be linked to the standard libraries.
+
+We don't distinguish lab1-labN and will judge your score based on what you've done according to the class PPT.
+If you finish one of the extra tasks, you can get some bonus.
 
 You may want to improve the debugger, Makefile or anything else in this process.
 

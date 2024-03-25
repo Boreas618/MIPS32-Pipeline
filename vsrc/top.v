@@ -8,7 +8,7 @@
  * 0x3: write reg1 + reg2 to reg3
  * 0x4: write 0 to reg1
  * 0x0: halt, set err if reg1 != 0.
- * Every instruction has the length of 64 bits.
+ * Every instruction and register have the length of 64 bits.
  *
  * PC always points to the address of next instruction here.
  * After reset, PC will be set to 0x1000.

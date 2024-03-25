@@ -1,3 +1,5 @@
+/* FDU Debugger */
+
 #include <fdb.h>
 #include <cpu.h>
 #include <utils.h>
