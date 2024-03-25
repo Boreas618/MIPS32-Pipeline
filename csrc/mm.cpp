@@ -21,7 +21,7 @@ void mm_init(void)
 
 static inline uint64_t guest_to_host(uint64_t addr)
 {
-	return (uint64_t)((void *)mem + addr - GUEST_BASE);	
+	return (uint64_t)mem + addr - GUEST_BASE;
 }
 
 extern "C" void mm_read(long long addr, long long *data)
