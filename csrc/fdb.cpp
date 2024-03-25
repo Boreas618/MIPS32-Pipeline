@@ -4,8 +4,8 @@
 
 #include <set>
 
-bool need_disasm = false;
-std::set<uint64_t> brks;
+static bool need_disasm = false;
+static std::set<uint64_t> brks;
 
 void fdb_init(void)
 {
