@@ -1,6 +1,6 @@
 /*
  * This file is copied from NEMU project.
- * Some modification is made.
+ * Some modifications are made.
  *
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
  */
