@@ -31,7 +31,7 @@ sudo cmake --build . --target install
 
 Get the project:
 ```bash
-# Please fork https://gitee.com/lsc2001/fdcpu.git first.
+# Please fork this repository first.
 git clone https://gitee.com/your_gitee_account/fdcpu.git
 cd fdcpu
 # All your modifications should be made on branch "lab".
