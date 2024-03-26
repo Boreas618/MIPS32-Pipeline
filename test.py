@@ -13,7 +13,7 @@ if __name__ == "__main__":
     
     for i, t in enumerate(tests):
         cmd = sys.argv[1] + " " + t
-        p = subprocess.Popen(cmd, shell=True)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL)
         p.wait()
         if p.returncode != 0:
             print(RED + f"TEST{i} FAILED." + NORMAL)

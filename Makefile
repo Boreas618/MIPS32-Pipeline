@@ -27,7 +27,7 @@ $(BIN): $(CSRCS) $(VSRCS)
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		-o $(abspath $(BIN)) --Mdir $(OBJ_DIR)
 
-run: $(BIN)
+run: $(BIN) $(IMG)
 	@ARCH=$(ARCH) $(BIN) --debug $(IMG)
 
 test: $(BIN)
