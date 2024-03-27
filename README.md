@@ -97,7 +97,7 @@ Good luck to you!
 
 # Submission
 To submit your code, upload the url of your git branch on e-learning (https://gitee.com/your_gitee_account/fdcpu/tree/lab).
-Your branch should also include a "your_student_number-your_name.md" (e.g., "12345-xxx.md"),
+Your branch should also include a "your_student_number-your_name.pdf" (e.g., "12345-xxx.pdf"),
 which describe how to run and test your lab, and the design and evaluation of your lab.
 
 # Other things that may help
