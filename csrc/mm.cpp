@@ -17,7 +17,8 @@ void mm_init(const char *img_name)
 
 	memset(mem, 0, sizeof(mem));
 
-	if (img_name != NULL) {
+	if (img_name != NULL)
+	{
 		fp = fopen(img_name, "rb");
 		if (fp == NULL)
 			perror_exit("%s not found.\n", img_name);
@@ -33,8 +34,14 @@ static inline uint64_t guest_to_host(uint64_t addr)
 	return (uint64_t)mem + addr - GUEST_BASE;
 }
 
-extern "C" void mm_read(long long addr, long long *data)
+extern "C" void mm_read(uint64_t addr, uint64_t *data)
 {
 	uint64_t host_addr = guest_to_host(addr);
-	*data = *(long long *)host_addr;
+	*data = *(uint64_t *)host_addr;
+}
+
+extern "C" void mm_write(uint64_t addr, uint64_t data)
+{
+	uint64_t host_addr = guest_to_host(addr);
+	*(uint64_t *)host_addr = data;
 }

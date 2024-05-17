@@ -1,7 +1,7 @@
 default: all
 
 # ARCH can be dummy, mips or loongarch
-ARCH = dummy
+ARCH = mips
 IMG = $(abspath ./tests/dummy.bin)
 
 ROOT = $(abspath .)

@@ -1,37 +1,15 @@
-/*
- * We use a self-defined ISA here,
- * you should change it to your chosen ISA (MIPS or LoongArch).
- *
- * instructions:
- * 0x1: write 1 to reg1
- * 0x2: write 2 to reg2
- * 0x3: write reg1 + reg2 to reg3
- * 0x4: write 0 to reg1
- * 0x0: halt, set err if reg1 != 0.
- * Every instruction and register have the length of 64 bits.
- *
- * PC always points to the address of next instruction here.
- * After reset, PC will be set to 0x1000.
- */
 module top (
-	input	wire					clk,
-	input	wire					rst,
-
-	output	reg		[63:0]			pc,
-	output	reg						halt,
-
-	output	reg		[63:0]			counter,	// system counter
-	output	reg		[63:0]			last_pc,
-	output	reg		[63:0]			last_inst,
-	output	reg						err
+	input rst,
+	input clk,
+	output halt,
+	output err,
+	output [31:0] pc,
+	output [31:0] system_counter,
+	output [31:0] last_pc,
+	output [31:0] last_inst
 );
-
-	import "DPI-C" function void set_regs_ptr(input logic[63:0] r[]);
-
-	import "DPI-C" function void mm_read(
-		input	longint		addr,
-		output	longint		data
-	);
+	/*
+	import "DPI-C" function void set_regs_ptr(input logic[31:0] r[]);
 
 	initial begin
 		set_regs_ptr(regs);
@@ -94,6 +72,21 @@ module top (
 			last_pc <= pc;
 			last_inst <= inst;
 		end
-	end
+	end*/
+
+	wire write_enabled;
+	wire [31:0] addr;
+	wire [31:0] w_data;
+	wire [31:0] r_data;
+
+	SimulatedMemory simulatedMemory (
+		.reset(rst),
+		.clk(clk),
+		.write_enabled(write_enabled),
+		.addr(addr),
+		.w_data(w_data),
+		.r_data(r_data)
+	);
+
 
 endmodule
