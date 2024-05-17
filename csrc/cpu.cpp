@@ -16,7 +16,7 @@ extern "C" void set_regs_ptr(const svOpenArrayHandle r)
 static inline void update_cpu() {
 	cpu.pc = vcpu->pc;
 	cpu.halt = vcpu->halt;
-	cpu.counter = vcpu->counter;
+	cpu.counter = vcpu->system_counter;
 	cpu.last_pc = vcpu->last_pc;
 	cpu.last_inst = vcpu->last_inst;
 	cpu.err = vcpu->err;

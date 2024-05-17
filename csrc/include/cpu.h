@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-typedef Vtop Vcpu;
+typedef VTop Vcpu;
 
 typedef struct {
 	uint64_t *regs;

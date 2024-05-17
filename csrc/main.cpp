@@ -28,22 +28,23 @@ static void print_help(const char *self)
 static void parse_args(int argc, char *argv[])
 {
 	struct option options[] = {
-		{"debug", no_argument, NULL, 'd' },
-		{0, 0, NULL, 0 }
-	};
+		{"debug", no_argument, NULL, 'd'},
+		{0, 0, NULL, 0}};
 
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "-d", options, NULL)) != -1) {
-		switch (opt) {
+	while ((opt = getopt_long(argc, argv, "-d", options, NULL)) != -1)
+	{
+		switch (opt)
+		{
 		case 'd':
 			debug = true;
 			break;
-		
+
 		case 1:
 			img_name = optarg;
 			break;
-		
+
 		default:
 			print_help(argv[0]);
 		}

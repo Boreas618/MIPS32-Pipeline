@@ -1,15 +1,17 @@
-module top (
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off SYNCASYNCNET */
+module Top (
 	input rst,
 	input clk,
-	output halt,
-	output err,
-	output [31:0] pc,
-	output [31:0] system_counter,
-	output [31:0] last_pc,
-	output [31:0] last_inst
+	output reg halt,
+	output reg err,
+	output reg [63:0] pc,
+	output reg [63:0] system_counter,
+	output reg [63:0] last_pc,
+	output reg [63:0] last_inst
 );
-	/*
-	import "DPI-C" function void set_regs_ptr(input logic[31:0] r[]);
+	
+	import "DPI-C" function void set_regs_ptr(input logic[63:0] r[]);
 
 	initial begin
 		set_regs_ptr(regs);
@@ -37,10 +39,6 @@ module top (
 	// Current instruction
 	reg		[63:0]			inst;
 
-	always @(*) begin
-		mm_read(pc, inst);
-	end
-
 	// Decode and Execute
 	always @(posedge clk) begin
 		if (~rst) begin
@@ -62,31 +60,33 @@ module top (
 	// For debug
 	always @(posedge clk) begin
 		if (rst) begin
-			counter <= 64'b0;
+			system_counter <= 64'b0;
 			last_pc <= 64'b0;
 			last_inst <= 64'b0;
 			err <= 1'b0;
 		end
 		else begin
-			counter <= counter + 64'd1;
+			system_counter <= system_counter + 64'd1;
 			last_pc <= pc;
 			last_inst <= inst;
 		end
-	end*/
+	end
 
 	wire write_enabled;
-	wire [31:0] addr;
-	wire [31:0] w_data;
-	wire [31:0] r_data;
+	wire m_err;
+	wire [63:0] w_data;
 
-	SimulatedMemory simulatedMemory (
+	assign write_enabled = 1'b0;
+	assign w_data = 64'b0;
+
+	SimulatedMemory inst_mem (
 		.reset(rst),
 		.clk(clk),
 		.write_enabled(write_enabled),
-		.addr(addr),
+		.addr(pc),
 		.w_data(w_data),
-		.r_data(r_data)
+		.r_data(inst),
+		.err(m_err)
 	);
-
 
 endmodule
