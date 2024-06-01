@@ -1,4 +1,4 @@
-module SimulatedMemory(
+module DataMemory(
     input reset,
     input clk,
     input write_enabled,

@@ -1,5 +1,6 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off SYNCASYNCNET */
+/* verilator lint_off UNDRIVEN */
 module Top (
 	input rst,
 	input clk,
@@ -28,16 +29,31 @@ module Top (
 		end
 	end
 
-	// Program counter
-	always @(posedge clk) begin
-		if (rst)
-			pc <= 64'h1000;
-		else
-			pc <= pc + 64'd8;
-	end
+	logic [63:0] inst;
+	logic [1:0] if_pc_src;
+	logic [63:0] if_pc_branch_in;
+	
+	assign if_pc_src = 2'h0;
+	assign if_pc_branch_in = 64'h0;
 
-	// Current instruction
-	reg		[63:0]			inst;
+	always_ff @(posedge clk, negedge rst) begin
+        if (rst) begin
+            pc <= 64'h1000 - 64'd8;
+        end else begin
+            case (if_pc_src)
+                2'h0: pc <= pc + 64'd8;
+                2'h1: pc <= if_pc_branch_in;
+                default: pc <= 64'h1000 - 64'd8;
+            endcase
+        end
+    end
+
+	InstMemory inst_mem (
+		.reset(rst),
+		.addr(pc),
+		.r_data(inst),
+		.err(m_err)
+	);
 
 	// Decode and Execute
 	always @(posedge clk) begin
@@ -78,15 +94,5 @@ module Top (
 
 	assign write_enabled = 1'b0;
 	assign w_data = 64'b0;
-
-	SimulatedMemory inst_mem (
-		.reset(rst),
-		.clk(clk),
-		.write_enabled(write_enabled),
-		.addr(pc),
-		.w_data(w_data),
-		.r_data(inst),
-		.err(m_err)
-	);
 
 endmodule

@@ -75,6 +75,5 @@ int main(int argc, char *argv[])
 	system_init(argc, argv);
 	fdb_start();
 	system_exit();
-
 	return 0;
 }

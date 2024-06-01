@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 
 #define MEM_SIZE 1024
 #define GUEST_BASE 0x1000
