@@ -55,7 +55,7 @@ static void fdb_print(void)
 	int i;
 
 	printf("pc = 0x%lx\n", cpu.pc);
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < 32; i++)
 		printf("regs[%d] = 0x%lx\n", i, cpu.regs[i]);
 }
 
