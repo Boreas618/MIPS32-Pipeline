@@ -12,7 +12,7 @@
 typedef VTop Vcpu;
 
 typedef struct {
-	uint64_t *regs;
+	uint32_t *regs;
 	uint64_t pc;
 	uint64_t halt;
 

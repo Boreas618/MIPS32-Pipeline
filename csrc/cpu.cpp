@@ -10,7 +10,7 @@ CPU cpu;
 
 extern "C" void set_regs_ptr(const svOpenArrayHandle r)
 {
-	cpu.regs = (uint64_t *)(((VerilatedDpiOpenVar *)r)->datap());
+	cpu.regs = (uint32_t *)(((VerilatedDpiOpenVar *)r)->datap());
 }
 
 static inline void update_cpu() {

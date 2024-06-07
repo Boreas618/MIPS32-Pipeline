@@ -29,12 +29,12 @@ module Top (
 
 	always_ff @(posedge clk, negedge rst) begin
         if (rst) begin
-            pc <= 32'h1000 - 32'd8;
+            pc <= 32'h1000 - 32'd4;
         end else begin
             case (if_pc_src)
-                2'h0: pc <= pc + 32'd8;
+                2'h0: pc <= pc + 32'd4;
                 2'h1: pc <= if_pc_branch_in;
-                default: pc <= 32'h1000 - 32'd8;
+                default: pc <= 32'h1000 - 32'd4;
             endcase
         end
     end

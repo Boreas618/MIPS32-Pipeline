@@ -1,2 +1,4 @@
+.text
+.global _start
 _start:
-    addu $2, $1, $1
+    addu $3, $1, $1
