@@ -12,8 +12,32 @@ module Top (
 	output	logic 	[31:0] last_inst
 );
 
-
-
+	DebugPort debug_port (
+		.clk(clk),
+        .inst(inst),
+        .if_pc_src(if_pc_src),
+        .if_pc_branch_in(if_pc_branch_in),
+        .reg_write_d(reg_write_d),
+        .mem_to_reg_d(mem_to_reg_d),
+        .mem_write_d(mem_write_d),
+        .branch_d(branch_d),
+        .alu_control_d(alu_control_d),
+        .alu_src_d(alu_src_d),
+        .reg_dst_d(reg_dst_d),
+        .rd1_d(rd1_d),
+        .rd2_d(rd2_d),
+        .rt_d(rt_d),
+        .rd_d(rd_d),
+        .imm_d(imm_d),
+        .alu_out_e(alu_out_e),
+        .write_data_e(write_data_e),
+        .write_reg_e(write_reg_e),
+        .reg_write_e(reg_write_e),
+        .mem_to_reg_e(mem_to_reg_e),
+        .mem_write_e(mem_write_e),
+        .branch_e(branch_e)
+    );
+	
 	/* Instruction Fetch Stage.
 	 * 
 	 * `inst`: the current instruction with MIPS encoding specification.
@@ -52,8 +76,13 @@ module Top (
     logic branch_d;
     logic [3:0]alu_control_d;
     logic alu_src_d;
-    logic [1:0]reg_dst_d;
+    logic reg_dst_d;
     logic [31:0]debug;
+	logic [31:0]rd1_d;
+	logic [31:0]rd2_d;
+	logic [4:0]rt_d;
+	logic [4:0]rd_d;
+	logic [31:0]imm_d;
 
 	Decode decode(
 		.rst(rst),
@@ -67,7 +96,44 @@ module Top (
 		.alu_control_d(alu_control_d),
 		.alu_src_d(alu_src_d),
 		.reg_dst_d(reg_dst_d),
-		.debug(debug)
+		.debug(debug),
+		.rd1_d(rd1_d),
+		.rd2_d(rd2_d),
+		.rt_d(rt_d),
+		.rd_d(rd_d),
+		.imm_d(imm_d)
+	);
+
+	logic [31:0] alu_out_e;
+	logic [31:0] write_data_e;
+	logic [4:0] write_reg_e;
+	logic reg_write_e;
+    logic mem_to_reg_e;
+	logic mem_write_e;
+    logic branch_e;
+
+	Execute execute (
+		.clk(clk),
+		.rst(rst),
+		.rd1_d(rd1_d),
+		.rd2_d(rd2_d),
+		.rt_d(rt_d),
+		.rd_d(rd_d),
+		.imm_d(imm_d),
+		.reg_write_d(reg_write_d),
+		.mem_to_reg_d(mem_to_reg_d),
+		.mem_write_d(mem_write_d),
+		.branch_d(branch_d),
+		.alu_control_d(alu_control_d),
+		.alu_src_d(alu_src_d),
+		.reg_dst_d(reg_dst_d),
+		.alu_out_e(alu_out_e),
+		.write_data_e(write_data_e),
+		.write_reg_e(write_reg_e),
+		.reg_write_e(reg_write_e),
+		.mem_to_reg_e(mem_to_reg_e),
+		.mem_write_e(mem_write_e),
+		.branch_e(branch_e)
 	);
 
 	/*

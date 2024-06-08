@@ -13,7 +13,13 @@ extern "C" void set_regs_ptr(const svOpenArrayHandle r)
 	cpu.regs = (uint32_t *)(((VerilatedDpiOpenVar *)r)->datap());
 }
 
-static inline void update_cpu() {
+extern "C" void set_debug_port_ptr(const svOpenArrayHandle r)
+{
+	cpu.watch_list = (uint32_t *)(((VerilatedDpiOpenVar *)r)->datap());
+}
+
+static inline void update_cpu()
+{
 	cpu.pc = vcpu->pc;
 	cpu.halt = vcpu->halt;
 	cpu.counter = vcpu->system_counter;
@@ -24,8 +30,10 @@ static inline void update_cpu() {
 
 static inline void single_cycle()
 {
-	vcpu->clk = 0; vcpu->eval();
-	vcpu->clk = 1; vcpu->eval();
+	vcpu->clk = 0;
+	vcpu->eval();
+	vcpu->clk = 1;
+	vcpu->eval();
 	update_cpu();
 }
 

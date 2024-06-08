@@ -16,7 +16,7 @@ module RegFile(
 	/* 32 General Purpose Regsiters. */
 	logic [31:0] regs[31:0];
 	integer i;
-	always @(posedge clk) begin
+	always_ff @(posedge clk) begin
 		for (i = 0; i < 31; i = i + 1) begin
 			if (rst)
 				regs[i] <= {27'b0, i};
@@ -26,7 +26,7 @@ module RegFile(
     assign data_1 = regs[read_addr_1];
     assign data_2 = regs[read_addr_2];
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (write_enabled) begin
             regs[write_addr] <= write_data;
         end

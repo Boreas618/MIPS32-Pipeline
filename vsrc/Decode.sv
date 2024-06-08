@@ -14,8 +14,13 @@ module Decode(
     output  logic   branch_d,
     output  logic   [3:0]alu_control_d,
     output  logic   alu_src_d,
-    output  logic   [1:0]reg_dst_d,
-    output  logic   [31:0]debug
+    output  logic   reg_dst_d,
+    output  logic   [31:0]debug,
+    output  logic   [31:0]rd1_d,
+    output  logic   [31:0]rd2_d,
+    output  logic   [4:0]rt_d,
+    output  logic   [4:0]rd_d,
+    output  logic   [31:0]imm_d
 );
 
     logic [5:0] op, funct;
@@ -24,8 +29,6 @@ module Decode(
     logic [25:0] jump_addr;
     logic [31:0] wirte_data;
     logic write_enabled;
-    logic [31:0] data_1;
-    logic [31:0] data_2;
     logic [31:0] write_data;
 
     assign op = inst[31:26];
@@ -42,8 +45,13 @@ module Decode(
             case(funct)
                 `ADDU: begin
                     write_enabled = 1'b1;
-                    write_data = data_1 + data_2;
+                    write_data = rd1_d + rd2_d;
                 end
+                `SUBU: begin
+                    write_enabled = 1'b1;
+                    write_data = rd1_d - rd2_d;
+                end
+
                 default: begin
                 end
             endcase
@@ -58,11 +66,19 @@ module Decode(
         .write_addr(rd),
         .write_data(write_data),
         .write_enabled(write_enabled),
-        .data_1(data_1),
-        .data_2(data_2)
+        .data_1(rd1_d),
+        .data_2(rd2_d)
+    );
+
+    SignExtend extend(
+        .in(imm),
+        .out(imm_d)
     );
 
     assign debug = write_data;
+    assign rt_d = inst[20:16];
+    assign rd_d = inst[15:11];
+
 
 
 endmodule

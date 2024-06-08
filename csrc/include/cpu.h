@@ -8,14 +8,17 @@
 #include <Vtop__Dpi.h>
 
 #include <stdint.h>
+#include <vector>
 
 typedef VTop Vcpu;
 
-typedef struct {
+typedef struct
+{
 	uint32_t *regs;
+	uint32_t *watch_list;
+	
 	uint64_t pc;
 	uint64_t halt;
-
 	uint64_t counter;
 	uint64_t last_pc;
 	uint64_t last_inst;

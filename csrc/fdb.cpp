@@ -18,13 +18,17 @@ void fdb_init(bool debug)
 	need_debug = debug;
 
 	arch = getenv("ARCH");
-	if (!strcmp(arch, "loongarch")) {
+	if (!strcmp(arch, "loongarch"))
+	{
 		triple = "loongarch32-unknown-linux-gnu";
 		need_disasm = true;
-	} else if (!strcmp(arch, "mips")) {
+	}
+	else if (!strcmp(arch, "mips"))
+	{
 		triple = "mipsel-linux-gnu";
 		need_disasm = true;
-	} else if (strcmp(arch, "dummy"))
+	}
+	else if (strcmp(arch, "dummy"))
 		perror_exit("ARCH should be in [dummy, mips, loongarch].\n");
 
 	printf("You are using %s ISA...\n", arch);
@@ -41,9 +45,11 @@ static bool check_registers(void)
 
 static void fdb_run(void)
 {
-	while (!cpu.halt && !cpu.err) {
+	while (!cpu.halt && !cpu.err)
+	{
 		cpu_exec_once();
-		if (brks.count(cpu.pc)) {
+		if (brks.count(cpu.pc))
+		{
 			printf("Breakpoint hit at 0x%lx.\n", cpu.pc);
 			break;
 		}
@@ -52,11 +58,11 @@ static void fdb_run(void)
 
 static void fdb_print(void)
 {
-	int i;
-
 	printf("pc = 0x%lx\n", cpu.pc);
-	for (i = 0; i < 32; i++)
+	for (size_t i = 0; i < 32; i++)
 		printf("regs[%d] = 0x%lx\n", i, cpu.regs[i]);
+	for (size_t i = 0; i < 64; i++)
+		printf("watch_list[%d] = 0x%lx\n", i, cpu.watch_list[i]);
 }
 
 static void fdb_debug_once(void)
@@ -69,36 +75,39 @@ static void fdb_debug_once(void)
 	printf("(fdb) ");
 	scanf(" %c", &op);
 
-	switch (op) {
+	switch (op)
+	{
 	/* next */
 	case 'n':
 		cpu_exec_once();
 
-		if (need_disasm) {
+		if (need_disasm)
+		{
 			*(uint64_t *)bytes = cpu.last_inst;
 			disassemble(buf, sizeof(buf), cpu.last_pc, bytes, sizeof(bytes));
 			printf("0x%lx: %s\n", cpu.last_pc, buf);
-		} else
+		}
+		else
 			printf("0x%lx: 0x%lx\n", cpu.last_pc, cpu.last_inst);
 
 		break;
-	
+
 	/* run */
 	case 'r':
 		fdb_run();
 		break;
-	
+
 	/* breakpoint */
 	case 'b':
 		scanf(" 0x%lx", &addr);
 		brks.insert(addr);
 		break;
-	
+
 	/* print */
 	case 'p':
 		fdb_print();
 		break;
-	
+
 	case 'q':
 		return;
 		break;
@@ -113,7 +122,8 @@ void fdb_start(void)
 	if (need_debug)
 		printf("Debug mode.\n");
 
-	while (!cpu.halt && !cpu.err) {
+	while (!cpu.halt && !cpu.err)
+	{
 		if (need_debug)
 			fdb_debug_once();
 		else
@@ -124,5 +134,5 @@ void fdb_start(void)
 		perror_exit("Error happend in CPU.\n");
 
 	if (!check_registers())
-	 	perror_exit("Wrong Answer.\n");
+		perror_exit("Wrong Answer.\n");
 }
