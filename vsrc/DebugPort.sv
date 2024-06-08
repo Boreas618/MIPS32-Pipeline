@@ -58,7 +58,7 @@ module DebugPort(
 
     logic [31:0] aligned_logics [63:0];
     import "DPI-C" function void set_debug_port_ptr(input logic[31:0] r[]);
-	initial begin set_debug_port_ptr(aligned_logics); end
+    initial begin set_debug_port_ptr(aligned_logics); end
 
     always_ff @(posedge clk) begin
         aligned_logics[0] <= inst;
@@ -83,5 +83,5 @@ module DebugPort(
         aligned_logics[19] <= aligned_mem_to_reg_e;
         aligned_logics[20] <= aligned_mem_write_e;
         aligned_logics[21] <= aligned_branch_e;
-	end
+    end
 endmodule

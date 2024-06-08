@@ -11,17 +11,17 @@ module RegFile(
     output  logic   [31:0]data_2
 );
     import "DPI-C" function void set_regs_ptr(input logic[31:0] r[]);
-	initial begin set_regs_ptr(regs); end
+    initial begin set_regs_ptr(regs); end
 
-	/* 32 General Purpose Regsiters. */
-	logic [31:0] regs[31:0];
-	integer i;
-	always_ff @(posedge clk) begin
-		for (i = 0; i < 31; i = i + 1) begin
-			if (rst)
-				regs[i] <= {27'b0, i};
-		end
-	end
+    /* 32 General Purpose Regsiters. */
+    logic [31:0] regs[31:0];
+    integer i;
+    always_ff @(posedge clk) begin
+        for (i = 0; i < 31; i = i + 1) begin
+            if (rst)
+                regs[i] <= {27'b0, i};
+        end
+    end
 
     assign data_1 = regs[read_addr_1];
     assign data_2 = regs[read_addr_2];

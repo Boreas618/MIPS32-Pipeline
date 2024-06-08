@@ -68,10 +68,10 @@ module Execute(
     end
 
     ALU alu(
-		.alu_ctrl(alu_control_e),
-		.src1(src1_e),
-		.src2(src2_e),
-		.out(alu_out_e)
-	);
+        .alu_ctrl(alu_control_e),
+        .src1(src1_e),
+        .src2(src2_e),
+        .out(alu_out_e)
+    );
 
 endmodule
