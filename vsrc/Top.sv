@@ -29,6 +29,7 @@ module Top (
         .rt_d(rt_d),
         .rd_d(rd_d),
         .imm_d(imm_d),
+        .shamt_d(shamt_d),
         .alu_out_e(alu_out_e),
         .write_data_e(write_data_e),
         .write_reg_e(write_reg_e),
@@ -75,7 +76,7 @@ module Top (
     logic mem_write_d;
     logic branch_d;
     logic [3:0]alu_control_d;
-    logic alu_src_d;
+    logic [1:0]alu_src_d;
     logic reg_dst_d;
     logic [31:0]debug;
     logic [31:0]rd1_d;
@@ -83,6 +84,7 @@ module Top (
     logic [4:0]rt_d;
     logic [4:0]rd_d;
     logic [31:0]imm_d;
+    logic [4:0]shamt_d;
 
     Decode decode(
         .rst(rst),
@@ -96,12 +98,15 @@ module Top (
         .alu_control_d(alu_control_d),
         .alu_src_d(alu_src_d),
         .reg_dst_d(reg_dst_d),
-        .debug(debug),
         .rd1_d(rd1_d),
         .rd2_d(rd2_d),
         .rt_d(rt_d),
         .rd_d(rd_d),
-        .imm_d(imm_d)
+        .imm_d(imm_d),
+        .shamt_d(shamt_d),
+        .write_reg(write_reg_w),
+        .write_data(result_w),
+        .write_enabled(reg_write_w)
     );
 
     logic [31:0] alu_out_e;
@@ -111,10 +116,12 @@ module Top (
     logic mem_to_reg_e;
     logic mem_write_e;
     logic branch_e;
+    logic zero_e;
 
     Execute execute (
         .clk(clk),
         .rst(rst),
+        .shamt_d(shamt_d),
         .rd1_d(rd1_d),
         .rd2_d(rd2_d),
         .rt_d(rt_d),
@@ -133,7 +140,47 @@ module Top (
         .reg_write_e(reg_write_e),
         .mem_to_reg_e(mem_to_reg_e),
         .mem_write_e(mem_write_e),
-        .branch_e(branch_e)
+        .branch_e(branch_e),
+        .zero_e(zero_e)
+    );
+
+    logic [31:0] read_data_m;
+    logic [31:0] alu_out_m;
+    logic reg_write_m;
+    logic mem_to_reg_m;
+    logic [4:0] write_reg_m;
+
+    Memory memory(
+        .clk(clk),
+        .rst(rst),
+        .reg_write_e(reg_write_e),
+        .mem_to_reg_e(mem_to_reg_e),
+        .mem_write_e(mem_write_e),
+        .branch_e(branch_e),
+        .alu_out_e(alu_out_e),
+        .write_data_e(write_data_e),
+        .write_reg_e(write_reg_e),
+        .zero_e(zero_e),
+        .read_data_m(read_data_m),
+        .alu_out_m(alu_out_m),
+        .reg_write_m(reg_write_m),
+        .mem_to_reg_m(mem_to_reg_m),
+        .write_reg_m(write_reg_m)
+    );
+
+    logic [31:0] result_w;
+    logic [4:0] write_reg_w;
+    logic reg_write_w;
+
+    WriteBack write_back(
+        .reg_write_m(reg_write_m),
+        .mem_to_reg_m(mem_to_reg_m),
+        .alu_out_m(alu_out_m),
+        .read_data_m(read_data_m),
+        .write_reg_m(write_reg_m),
+        .write_reg_w(write_reg_w),
+        .result_w(result_w),
+        .reg_write_w(reg_write_w)
     );
 
     /* Legacy Debug functionalities.

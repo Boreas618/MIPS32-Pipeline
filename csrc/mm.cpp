@@ -41,8 +41,8 @@ extern "C" void mm_read(uint64_t addr, uint64_t *data)
 	*data = *(uint64_t *)host_addr;
 }
 
-extern "C" void mm_write(uint64_t addr, uint64_t data)
+extern "C" void mm_write(uint64_t addr, uint32_t data)
 {
 	uint64_t host_addr = guest_to_host(addr);
-	*(uint64_t *)host_addr = data;
+	*(uint32_t *)host_addr = data;
 }

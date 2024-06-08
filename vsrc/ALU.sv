@@ -13,7 +13,7 @@ module ALU (
             4'b0100: out = ~ (src1 | src2);
             4'b0101: out = src1 ^ src2;        
             4'b0110: out = src2 << src1;
-            4'b0111: out = $signed(src2) >>> src1;
+            4'b0111: out = $signed(src2) >> src1;
             4'b1000: out = src2 >> src1;
             4'b1001: out = {31'b0, $signed(src1) < $signed(src2)};
             4'b1010: out = {31'b0, src1 < src2};

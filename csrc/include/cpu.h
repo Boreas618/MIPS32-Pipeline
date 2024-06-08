@@ -16,7 +16,6 @@ typedef struct
 {
 	uint32_t *regs;
 	uint32_t *watch_list;
-	
 	uint64_t pc;
 	uint64_t halt;
 	uint64_t counter;
