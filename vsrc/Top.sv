@@ -137,10 +137,10 @@ module Top (
     );
 
     /* Legacy Debug functionalities.
-	 *
-	 * Note that this part is planned to be removed in the future and
-	 * switch to the DebugPort module.
-	 */
+     *
+     * Note that this part is planned to be removed in the future and
+     * switch to the DebugPort module.
+     */
     always @(posedge clk) begin
         if (rst) begin
             system_counter <= 32'b0;
