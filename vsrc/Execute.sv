@@ -14,6 +14,10 @@ module Execute(
     input   logic   [3:0] alu_control_d,
     input   logic   [1:0] alu_src_d,
     input   logic   reg_dst_d,
+    input   logic   forward_src_a_enabled,
+    input   logic   [31:0]forward_src_a,
+    input   logic   forward_src_b_enabled,
+    input   logic   [31:0]forward_src_b,
     output  logic   [31:0] alu_out_e,
     output  logic   [31:0] write_data_e,
     output  logic   [4:0] write_reg_e,
@@ -31,24 +35,24 @@ module Execute(
     logic [4:0]rt_e;
     logic [4:0]rd_e;
     logic [31:0]imm_e;
-    logic [31:0]src1_e;
-    logic [31:0]src2_e;
+    logic [31:0] src1_e;
+    logic [31:0] src2_e;
     logic [4:0]shamt_e;
 
     assign src1_e = alu_src_e[0] ? {27'b0, shamt_e} : rd1_e;
     assign src2_e = alu_src_e[1] ? imm_e : rd2_e;
     assign write_data_e = rd2_e;
-    assign write_reg_e = reg_dst_e ? rd_e :rt_e;
+    assign write_reg_e = reg_dst_e ? rd_e : rt_e;
 
     always_ff @(posedge clk, negedge rst) begin
         if (rst) begin
-            reg_write_e <= 0;
-            mem_to_reg_e <= 0;
-            mem_write_e <= 0;
-            branch_e <= 0;
+            reg_write_e <= 1'b0;
+            mem_to_reg_e <= 1'b0;
+            mem_write_e <= 1'b0;
+            branch_e <= 1'b0;
             alu_control_e <= 4'b0;
-            alu_src_e <= 0;
-            reg_dst_e <= 0;
+            alu_src_e <= 2'b0;
+            reg_dst_e <= 1'b0;
             rd1_e <= 32'b0;
             rd2_e <= 32'b0;
             rt_e <= 5'b0;
@@ -63,8 +67,19 @@ module Execute(
             alu_control_e <= alu_control_d;
             alu_src_e <= alu_src_d;
             reg_dst_e <= reg_dst_d;
-            rd1_e <= rd1_d;
-            rd2_e <= rd2_d;
+
+            if (forward_src_a_enabled) begin
+                rd1_e <= forward_src_a;
+            end else begin
+                rd1_e <= rd1_d;
+            end
+
+            if (forward_src_b_enabled) begin
+                rd2_e <= forward_src_b;
+            end else begin
+                rd2_e <= rd2_d;
+            end
+
             rt_e <= rt_d;
             rd_e <= rd_d;
             imm_e <= imm_d;

@@ -61,8 +61,8 @@ static void fdb_print(void)
 	printf("pc = 0x%lx\n", cpu.pc);
 	for (size_t i = 0; i < 32; i++)
 		printf("regs[%d] = 0x%lx\n", i, cpu.regs[i]);
-	for (size_t i = 0; i < 64; i++)
-		printf("watch_list[%d] = 0x%lx\n", i, cpu.watch_list[i]);
+	/*for (size_t i = 0; i < 64; i++)
+		printf("watch_list[%d] = 0x%lx\n", i, cpu.watch_list[i]);*/
 }
 
 static void fdb_debug_once(void)

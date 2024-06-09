@@ -23,8 +23,10 @@ module RegFile(
         end
     end
 
-    assign data_1 = regs[read_addr_1];
-    assign data_2 = regs[read_addr_2];
+    always_ff @(posedge clk) begin
+        data_1 <= regs[read_addr_1];
+        data_2 <= regs[read_addr_2];
+    end
 
     always_ff @(posedge clk) begin
         if (write_enabled) begin

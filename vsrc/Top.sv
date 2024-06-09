@@ -1,6 +1,7 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off SYNCASYNCNET */
 /* verilator lint_off UNDRIVEN */
+
 module Top (
     input	logic	rst,
     input	logic	clk,
@@ -12,7 +13,7 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
-    DebugPort debug_port (
+    /*DebugPort debug_port (
         .clk(clk),
         .inst(inst),
         .if_pc_src(if_pc_src),
@@ -36,7 +37,39 @@ module Top (
         .reg_write_e(reg_write_e),
         .mem_to_reg_e(mem_to_reg_e),
         .mem_write_e(mem_write_e),
-        .branch_e(branch_e)
+        .branch_e(branch_e),
+        .alu_src_a(alu_src_a),
+        .alu_src_b(alu_src_b),
+        .forward_src_a_enabled(forward_src_a_enabled),
+        .forward_src_b_enabled(forward_src_b_enabled),
+        .write_reg_w(write_reg_w),
+        .result_w(result_w),
+        .reg_write_w(reg_write_w)
+    );*/
+
+    logic forward_src_a_enabled;
+    logic [31:0] forward_src_a;
+    logic forward_src_b_enabled;
+    logic [31:0] forward_src_b;
+
+    Hazard hazard(
+        .clk(clk),
+        .rst(rst),
+        .reg_write_e(reg_write_e),
+        .reg_write_m(reg_write_m),
+        .reg_write_w(reg_write_w),
+        .rs_d(rs_d),
+        .rt_d(rt_d),
+        .write_reg_e(write_reg_e),
+        .write_reg_m(write_reg_m),
+        .write_reg_w(write_reg_w),
+        .alu_out_e(alu_out_e),
+        .alu_out_m(alu_out_m),
+        .result_w(result_w),
+        .forward_src_a_enabled(forward_src_a_enabled),
+        .forward_src_a(forward_src_a),
+        .forward_src_b_enabled(forward_src_b_enabled),
+        .forward_src_b(forward_src_b)
     );
     
     /* Instruction Fetch Stage.
@@ -54,22 +87,39 @@ module Top (
 
     always_ff @(posedge clk, negedge rst) begin
         if (rst) begin
-            pc <= 32'h1000 - 32'd4;
+            pc <= 32'h1000;
         end else begin
             case (if_pc_src)
-                2'h0: pc <= pc + 32'd4;
+                2'h0: begin 
+                    pc <= pc + 32'd4;
+                end
                 2'h1: pc <= if_pc_branch_in;
-                default: pc <= 32'h1000 - 32'd4;
-            endcase
+                default: begin
+                    pc <= 32'h1000;
+                end
+            endcase  
         end
     end
 
     InstMemory inst_mem (
+        .rst(rst),
+        .clk(clk),
         .reset(rst),
         .addr(pc),
         .r_data(inst),
         .err(m_err)
     );
+
+    /*always_ff @(posedge clk) begin
+        $display("write_reg_e: %0d", write_reg_e);
+        $display("rs_d: %0d", rs_d);
+        $display("rt_d: %0d", rt_d);
+        $display("forward_src_a: %0d", forward_src_a);
+        $display("forward_src_a_enabled: %0d", forward_src_a_enabled);
+        $display("forward_src_b: %0d", forward_src_b);
+        $display("forward_src_b_enabled: %0d", forward_src_b_enabled);
+        $display("alu_out_e: %0d", alu_out_e);
+    end*/
 
     logic reg_write_d;
     logic mem_to_reg_d;
@@ -81,15 +131,16 @@ module Top (
     logic [31:0]debug;
     logic [31:0]rd1_d;
     logic [31:0]rd2_d;
+    logic [4:0]rs_d;
     logic [4:0]rt_d;
     logic [4:0]rd_d;
     logic [31:0]imm_d;
     logic [4:0]shamt_d;
 
     Decode decode(
+        .inst(inst),
         .rst(rst),
         .clk(clk),
-        .inst(inst),
         .pc(pc),
         .reg_write_d(reg_write_d),
         .mem_to_reg_d(mem_to_reg_d),
@@ -100,6 +151,7 @@ module Top (
         .reg_dst_d(reg_dst_d),
         .rd1_d(rd1_d),
         .rd2_d(rd2_d),
+        .rs_d(rs_d),
         .rt_d(rt_d),
         .rd_d(rd_d),
         .imm_d(imm_d),
@@ -134,6 +186,10 @@ module Top (
         .alu_control_d(alu_control_d),
         .alu_src_d(alu_src_d),
         .reg_dst_d(reg_dst_d),
+        .forward_src_a_enabled(forward_src_a_enabled),
+        .forward_src_a(forward_src_a),
+        .forward_src_b_enabled(forward_src_b_enabled),
+        .forward_src_b(forward_src_b),
         .alu_out_e(alu_out_e),
         .write_data_e(write_data_e),
         .write_reg_e(write_reg_e),
@@ -173,6 +229,8 @@ module Top (
     logic reg_write_w;
 
     WriteBack write_back(
+        .rst(rst),
+        .clk(clk),
         .reg_write_m(reg_write_m),
         .mem_to_reg_m(mem_to_reg_m),
         .alu_out_m(alu_out_m),

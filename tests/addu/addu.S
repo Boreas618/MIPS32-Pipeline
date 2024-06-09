@@ -1,6 +1,7 @@
 .text
 .global _start
 _start:
-    addu $3, $1, $1
-    addu $2, $1, $3
-    addu $4, $3, $1
+    addu $6, $3, $1
+    addu $6, $6, $6
+    addu $7, $6, $1
+    addu $8, $7, $6

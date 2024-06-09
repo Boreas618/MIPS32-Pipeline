@@ -23,14 +23,27 @@ module Memory(
     logic branch_m;
     logic err;
 
-    assign reg_write_m = reg_write_e;
-    assign mem_to_reg_m = mem_to_reg_e;
-    assign mem_write_m = mem_write_e;
-    assign branch_m = branch_e;
-    assign alu_out_m = alu_out_e;
-    assign write_data_m = write_data_e;
-    assign write_reg_m = write_reg_e;
-    assign zero_m = zero_e;
+    always_ff @(posedge clk, negedge rst) begin
+        if (rst) begin
+            reg_write_m <= 1'b0;
+            mem_to_reg_m <= 1'b0;
+            mem_write_m <= 1'b0;
+            branch_m <= 1'b0;
+            alu_out_m <= 32'b0;
+            write_data_m <= 32'b0;
+            write_reg_m <= 5'b0;
+            zero_m <= 1'b0;
+        end else begin
+            reg_write_m <= reg_write_e;
+            mem_to_reg_m <= mem_to_reg_e;
+            mem_write_m <= mem_write_e;
+            branch_m <= branch_e;
+            alu_out_m <= alu_out_e;
+            write_data_m <= write_data_e;
+            write_reg_m <= write_reg_e;
+            zero_m <= zero_e;
+        end
+    end
 
     DataMemory data_memory(
         .reset(rst),
