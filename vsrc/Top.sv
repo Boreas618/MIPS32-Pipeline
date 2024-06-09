@@ -13,40 +13,6 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
-    /*DebugPort debug_port (
-        .clk(clk),
-        .inst(inst),
-        .if_pc_src(if_pc_src),
-        .if_pc_branch_in(if_pc_branch_in),
-        .reg_write_d(reg_write_d),
-        .mem_to_reg_d(mem_to_reg_d),
-        .mem_write_d(mem_write_d),
-        .branch_d(branch_d),
-        .alu_control_d(alu_control_d),
-        .alu_src_d(alu_src_d),
-        .reg_dst_d(reg_dst_d),
-        .rd1_d(rd1_d),
-        .rd2_d(rd2_d),
-        .rt_d(rt_d),
-        .rd_d(rd_d),
-        .imm_d(imm_d),
-        .shamt_d(shamt_d),
-        .alu_out_e(alu_out_e),
-        .write_data_e(write_data_e),
-        .write_reg_e(write_reg_e),
-        .reg_write_e(reg_write_e),
-        .mem_to_reg_e(mem_to_reg_e),
-        .mem_write_e(mem_write_e),
-        .branch_e(branch_e),
-        .alu_src_a(alu_src_a),
-        .alu_src_b(alu_src_b),
-        .forward_src_a_enabled(forward_src_a_enabled),
-        .forward_src_b_enabled(forward_src_b_enabled),
-        .write_reg_w(write_reg_w),
-        .result_w(result_w),
-        .reg_write_w(reg_write_w)
-    );*/
-
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
     logic forward_src_b_enabled;
@@ -109,17 +75,6 @@ module Top (
         .r_data(inst),
         .err(m_err)
     );
-
-    /*always_ff @(posedge clk) begin
-        $display("write_reg_e: %0d", write_reg_e);
-        $display("rs_d: %0d", rs_d);
-        $display("rt_d: %0d", rt_d);
-        $display("forward_src_a: %0d", forward_src_a);
-        $display("forward_src_a_enabled: %0d", forward_src_a_enabled);
-        $display("forward_src_b: %0d", forward_src_b);
-        $display("forward_src_b_enabled: %0d", forward_src_b_enabled);
-        $display("alu_out_e: %0d", alu_out_e);
-    end*/
 
     logic reg_write_d;
     logic mem_to_reg_d;
