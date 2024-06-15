@@ -2,6 +2,7 @@
 `define __ICODE_SVH__
 
 `define RTYPE 6'b000000
+`define ADD 6'b100000
 `define ADDU 6'b100001
 `define SUBU 6'b100011
 `define AND 6'b100100

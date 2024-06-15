@@ -36,7 +36,6 @@ module Decode(
     assign rs = inst[25:21];
     assign rt = inst[20:16];
     assign rd = inst[15:11];
-    assign imm = inst[15:0];
     assign jump_addr = inst[25:0];
 
     always_ff @(posedge clk) begin
@@ -44,6 +43,7 @@ module Decode(
         rs_d <= inst[25:21];
         rt_d <= inst[20:16];
         rd_d <= inst[15:11];
+        imm <= inst[15:0];
 
         if (rst) begin
             reg_write_d <= 1'b0;
@@ -56,6 +56,19 @@ module Decode(
         end 
         else if (op == `RTYPE) begin
             case(funct)
+                /* 
+                 * Currently, our CPU doesn't support exception and therefore add is simply
+                 * an alias of addu
+                 */
+                `ADD: begin
+                    reg_write_d <= 1'b1;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b00;
+                    reg_dst_d <= 1'b1;
+                end
                 `ADDU: begin
                     reg_write_d <= 1'b1;
                     mem_to_reg_d <= 1'b0;
@@ -159,6 +172,21 @@ module Decode(
                     /*TODO*/
                 end
                 default: begin
+                end
+            endcase
+        end else begin
+            case(op)
+                `ADDIU: begin
+                    reg_write_d <= 1'b1;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b10;
+                    reg_dst_d <= 1'b0;
+                end
+                default: begin
+                    $display("Funct %0d not implemented.", op);
                 end
             endcase
         end
