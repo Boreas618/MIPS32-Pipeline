@@ -13,6 +13,21 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
+    parameter start_addr = 32'h1000;
+
+    always_comb begin
+        if (pc == start_addr + 32'h8080) begin
+            halt = 1'b1;
+            err = 1'b0;
+        end else if (pc == start_addr + 32'h4040) begin
+            halt = 1'b1;
+            err = 1'b1;
+        end else begin
+            halt = 1'b0;
+            err = 1'b0;
+        end
+    end
+
     logic stall;
 
     logic forward_src_a_enabled;
@@ -51,9 +66,11 @@ module Top (
     logic [31:0] if_pc_branch_in;
     logic resume;
 
+    assign resume = branch_e;
+
     always_ff @(posedge clk) begin
         if (rst) begin
-            pc <= 32'h1000;
+            pc <= start_addr;
         end else begin
             last_pc <= pc;
             case (if_pc_src)
@@ -61,11 +78,11 @@ module Top (
                     pc <= stall ? pc : pc + 32'd4;
                 end
                 2'h1: begin
-                    resume <= 1'b1;
+                    // resume <= 1'b1;
                     pc <= if_pc_branch_in;
                 end
                 default: begin
-                    pc <= 32'h1000;
+                    pc <= start_addr;
                 end
             endcase  
         end
@@ -232,7 +249,6 @@ module Top (
     always @(posedge clk) begin
         if (rst) begin
             system_counter <= 32'b0;
-            err <= 1'b0;
         end
         else begin
             system_counter <= system_counter + 32'd1;
