@@ -27,15 +27,12 @@ module Memory(
     logic branch_m;
     logic err;
 
-    always_ff @(posedge clk) begin  
-        if (zero_e && branch_e) begin
-            if_pc_src <= 2'b1;
-            if_pc_branch_in <= pc_branch_e;
-        end else begin
-            if_pc_src <= 2'b0;
-            if_pc_branch_in <= 32'b0;
-        end
+    always @(*) begin
+        if_pc_src = (zero_e && branch_e) ? 2'b1 : 2'b0;
+        if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : 32'b0;
+    end
 
+    always_ff @(posedge clk) begin  
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;
