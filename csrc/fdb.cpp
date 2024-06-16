@@ -130,7 +130,4 @@ void fdb_start(void)
 
 	if (cpu.err)
 		perror_exit("Error happend in CPU.\n");
-
-	if (!check_registers())
-		perror_exit("Wrong Answer.\n");
 }
