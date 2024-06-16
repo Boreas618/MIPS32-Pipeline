@@ -29,6 +29,7 @@ module RegFile(
     end
 
     always_ff @(posedge clk) begin
+        $display("%0x", write_data);
         if (write_enabled) begin
             regs[write_addr] <= write_data;
         end

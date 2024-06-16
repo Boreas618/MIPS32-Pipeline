@@ -21,21 +21,15 @@ module DataMemory(
 
     logic [63:0] expanded_addr = {32'b0, addr};
 
-    always_latch begin
-        if (reset) begin
-            r_data = 32'b0;
-        end else begin
-            logic [63:0] data;
-            mm_read(expanded_addr, data);
-            assign r_data = data[31:0];
-        end
-        err = 1'b0;
-    end
+    assign err = 1'b0;
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (write_enabled) begin
-            logic [63:0] expanded_w_data = {32'b0, w_data};;
+            logic [63:0] expanded_w_data = {32'b0, w_data};
             mm_write(expanded_addr, expanded_w_data);
+        end else begin
+            logic [31:0] dummy_data;
+            mm_read(expanded_addr, {dummy_data, r_data});
         end
     end
 

@@ -32,7 +32,7 @@ module Memory(
         if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : 32'b0;
     end
 
-    always_ff @(posedge clk) begin  
+    always_ff @(posedge clk) begin 
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;

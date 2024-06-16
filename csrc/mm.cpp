@@ -30,7 +30,7 @@ void mm_init(const char *img_name)
 	}
 }
 
-static inline uint64_t guest_to_host(uint64_t addr)
+inline uint64_t guest_to_host(uint64_t addr)
 {
 	return (uint64_t)mem + addr - GUEST_BASE;
 }

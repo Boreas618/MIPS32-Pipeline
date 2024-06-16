@@ -259,6 +259,24 @@ module Decode(
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
                 end
+                `SW: begin
+                    reg_write_d <= 1'b0;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b1;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b11;
+                    reg_dst_d <= 1'b0;
+                end
+                `LW: begin
+                    reg_write_d <= 1'b1;
+                    mem_to_reg_d <= 1'b1;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b10;
+                    reg_dst_d <= 1'b0;
+                end
                 default: begin
                     $display("Funct %0d not implemented.", op);
                 end
