@@ -250,6 +250,15 @@ module Decode(
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
                 end
+                `LUI: begin
+                    reg_write_d <= 1'b1;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b1011;
+                    alu_src_d <= 2'b10;
+                    reg_dst_d <= 1'b0;
+                end
                 `BEQ: begin
                     reg_write_d <= 1'b0;
                     mem_to_reg_d <= 1'b0;

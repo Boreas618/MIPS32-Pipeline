@@ -16,7 +16,6 @@ module WriteBack(
     logic   [31:0] read_data_w;
 
     always_ff @(posedge clk) begin
-        $display("%0x, %0x, %0x, %0x", mem_to_reg_m, read_data_m, alu_out_m, write_reg_m);
         if (rst) begin
             reg_write_w <= 1'b0;
             mem_to_reg_w <= 1'b0;
