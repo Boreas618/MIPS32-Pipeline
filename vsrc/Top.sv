@@ -97,7 +97,7 @@ module Top (
     logic [4:0]shamt_d;
     logic [31:0]pc_plus_4d;
     logic [31:0]jump_addr_d;
-    logic j_inst_d;
+    logic [1:0] j_inst_d;
 
     Decode decode(
         .inst(inst),
@@ -138,7 +138,7 @@ module Top (
     logic zero_e;
     logic [31:0] pc_branch_e;
     logic [31:0]jump_addr_e;
-    logic j_inst_e;
+    logic [1:0] j_inst_e;
 
     Execute execute (
         .clk(clk),

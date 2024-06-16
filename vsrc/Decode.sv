@@ -29,7 +29,7 @@ module Decode(
     output  logic   [4:0]shamt_d,
     output  logic   [31:0]pc_plus_4d,
     output  logic   [31:0]jump_addr_d,
-    output  logic   j_inst_d
+    output  logic   [1:0]j_inst_d
 );
     logic [5:0] op, funct;
     logic [4:0] rs, rt, rd;
@@ -52,9 +52,13 @@ module Decode(
 
         if (stall && resume) begin
             stall <= 1'b0;
-        end else if (op == `BEQ || op == `J || op == `JAL) begin
-            if (op == `J || op == `JAL) begin
-                j_inst_d <= 1'b1;
+        end else if (op == `BEQ || op == `J || op == `JAL || (op == `RTYPE && funct == `JR)) begin
+            if (op == `J) begin
+                j_inst_d <= 2'b01;
+            end else if (op == `JAL) begin
+                j_inst_d <= 2'b10;
+            end else if (op == `RTYPE && funct == `JR) begin
+                j_inst_d <= 2'b11;
             end
             stall <= 1'b1;
         end
@@ -193,7 +197,13 @@ module Decode(
                     reg_dst_d <= 1'b1;
                 end
                 `JR: begin
-                    /*TODO*/
+                    reg_write_d <= 1'b0;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b1;
+                    alu_control_d <= 4'b1110;
+                    alu_src_d <= 2'b00;
+                    reg_dst_d <= 1'b1;
                 end
                 default: begin
                 end

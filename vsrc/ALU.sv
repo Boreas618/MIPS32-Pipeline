@@ -18,6 +18,7 @@ module ALU (
             4'b1001: out = {31'b0, $signed(src1) < $signed(src2)};
             4'b1010: out = {31'b0, src1 < src2};
             4'b1011: out = {src2[15:0], 16'b0};
+            4'b1110: out = src1;
             4'b1111: out = src2;
             default: out = 32'b0;
         endcase

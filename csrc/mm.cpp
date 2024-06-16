@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#define MEM_SIZE 1024
+#define MEM_SIZE 8192 * 1024
 #define GUEST_BASE 0x1000
 
 uint64_t mem[MEM_SIZE];

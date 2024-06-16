@@ -13,7 +13,7 @@ module Memory(
     input   logic   zero_e,
     input   logic   [31:0] pc_branch_e,
     input   logic   [31:0] jump_addr_e,
-    input   logic   j_inst_e,
+    input   logic   [1:0] j_inst_e,
     output  logic   stall,
     output  logic   [31:0] read_data_m,
     output  logic   [31:0] alu_out_m,
@@ -29,14 +29,21 @@ module Memory(
     logic branch_m;
     logic err;
 
-    always @(*) begin
-        /*if_pc_src = ((zero_e && branch_e) || j_inst_e) ? 2'b1 : 2'b0;
-        if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : (j_inst_e ? jump_addr_e : 32'b0);*/
-        if_pc_src = (zero_e && branch_e) ? 2'b1 : 2'b0;
-        if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : 32'b0;
+    always_comb begin
+        if_pc_src = ((zero_e|| j_inst_e != 2'b0) && branch_e) ? 2'b1 : 2'b0;
+
+        if (zero_e && branch_e) begin
+            if_pc_branch_in = pc_branch_e;
+        end else if (j_inst_e == 2'b11 && branch_e) begin
+            if_pc_branch_in = alu_out_e;
+        end else if ((j_inst_e == 2'b10 || j_inst_e == 2'b01) && branch_e) begin
+            if_pc_branch_in = jump_addr_e;
+        end else begin
+            if_pc_branch_in = 32'b0;
+        end
     end
 
-    always_ff @(posedge clk) begin 
+    always_ff @(posedge clk) begin
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;
