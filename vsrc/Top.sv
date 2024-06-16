@@ -13,6 +13,8 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
+    logic stall;
+
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
     logic forward_src_b_enabled;
@@ -47,19 +49,21 @@ module Top (
     logic [31:0] inst;
     logic [1:0] if_pc_src;
     logic [31:0] if_pc_branch_in;
-    
-    assign if_pc_src = 2'h0;
-    assign if_pc_branch_in = 32'h0;
+    logic resume;
 
-    always_ff @(posedge clk, negedge rst) begin
+    always_ff @(posedge clk) begin
         if (rst) begin
             pc <= 32'h1000;
         end else begin
+            last_pc <= pc;
             case (if_pc_src)
-                2'h0: begin 
-                    pc <= pc + 32'd4;
+                2'h0: begin
+                    pc <= stall ? pc : pc + 32'd4;
                 end
-                2'h1: pc <= if_pc_branch_in;
+                2'h1: begin
+                    resume <= 1'b1;
+                    pc <= if_pc_branch_in;
+                end
                 default: begin
                     pc <= 32'h1000;
                 end
@@ -70,7 +74,7 @@ module Top (
     InstMemory inst_mem (
         .rst(rst),
         .clk(clk),
-        .reset(rst),
+        .stall(stall),
         .addr(pc),
         .r_data(inst),
         .err(m_err)
@@ -91,6 +95,7 @@ module Top (
     logic [4:0]rd_d;
     logic [31:0]imm_d;
     logic [4:0]shamt_d;
+    logic [31:0]pc_plus_4d;
 
     Decode decode(
         .inst(inst),
@@ -113,7 +118,10 @@ module Top (
         .shamt_d(shamt_d),
         .write_reg(write_reg_w),
         .write_data(result_w),
-        .write_enabled(reg_write_w)
+        .write_enabled(reg_write_w),
+        .stall(stall),
+        .pc_plus_4d(pc_plus_4d),
+        .resume(resume)
     );
 
     logic [31:0] alu_out_e;
@@ -124,6 +132,7 @@ module Top (
     logic mem_write_e;
     logic branch_e;
     logic zero_e;
+    logic [31:0] pc_branch_e;
 
     Execute execute (
         .clk(clk),
@@ -152,7 +161,9 @@ module Top (
         .mem_to_reg_e(mem_to_reg_e),
         .mem_write_e(mem_write_e),
         .branch_e(branch_e),
-        .zero_e(zero_e)
+        .zero_e(zero_e),
+        .pc_plus_4d(pc_plus_4d),
+        .pc_branch_e(pc_branch_e)
     );
 
     logic [31:0] read_data_m;
@@ -176,7 +187,11 @@ module Top (
         .alu_out_m(alu_out_m),
         .reg_write_m(reg_write_m),
         .mem_to_reg_m(mem_to_reg_m),
-        .write_reg_m(write_reg_m)
+        .write_reg_m(write_reg_m),
+        .stall(stall),
+        .if_pc_branch_in(if_pc_branch_in),
+        .if_pc_src(if_pc_src),
+        .pc_branch_e(pc_branch_e)
     );
 
     logic [31:0] result_w;
@@ -201,17 +216,14 @@ module Top (
      * Note that this part is planned to be removed in the future and
      * switch to the DebugPort module.
      */
+    assign last_inst = inst;
     always @(posedge clk) begin
         if (rst) begin
             system_counter <= 32'b0;
-            last_pc <= 32'b0;
-            last_inst <= 32'b0;
             err <= 1'b0;
         end
         else begin
             system_counter <= system_counter + 32'd1;
-            last_pc <= pc;
-            last_inst <= inst;
         end
     end
 

@@ -11,6 +11,8 @@ module Decode(
     input   logic   [4:0]write_reg,
     input   logic   [31:0]write_data,
     input   logic   write_enabled,
+    input   logic   resume,
+    output  logic   stall,
     output  logic   reg_write_d,
     output  logic   mem_to_reg_d,
     output  logic   mem_write_d,
@@ -24,7 +26,8 @@ module Decode(
     output  logic   [4:0]rt_d,
     output  logic   [4:0]rd_d,
     output  logic   [31:0]imm_d,
-    output  logic   [4:0]shamt_d
+    output  logic   [4:0]shamt_d,
+    output  logic   [31:0]pc_plus_4d
 );
     logic [5:0] op, funct;
     logic [4:0] rs, rt, rd;
@@ -44,6 +47,13 @@ module Decode(
         rt_d <= inst[20:16];
         rd_d <= inst[15:11];
         imm <= inst[15:0];
+        pc_plus_4d <= pc + 0;
+
+        if (stall && resume) begin
+            stall <= 1'b0;
+        end else if (op == `BEQ) begin
+            stall <= 1'b1;
+        end
 
         if (rst) begin
             reg_write_d <= 1'b0;
@@ -124,13 +134,23 @@ module Decode(
                     reg_dst_d <= 1'b1;
                 end     
                 `SLL: begin
-                    reg_write_d <= 1'b1;
-                    mem_to_reg_d <= 1'b0;
-                    mem_write_d <= 1'b0;
-                    branch_d <= 1'b0;
-                    alu_control_d <= 4'b0110;
-                    alu_src_d <= 2'b01;
-                    reg_dst_d <= 1'b1;
+                    if (rd_d == 5'b0) begin
+                        reg_write_d <= 1'b0;
+                        mem_to_reg_d <= 1'b0;
+                        mem_write_d <= 1'b0;
+                        branch_d <= 1'b0;
+                        alu_control_d <= 4'b0000;
+                        alu_src_d <= 2'b00;
+                        reg_dst_d <= 1'b0;
+                    end else begin
+                        reg_write_d <= 1'b1;
+                        mem_to_reg_d <= 1'b0;
+                        mem_write_d <= 1'b0;
+                        branch_d <= 1'b0;
+                        alu_control_d <= 4'b0110;
+                        alu_src_d <= 2'b01;
+                        reg_dst_d <= 1'b1;
+                    end
                 end
                 `SRA: begin
                     reg_write_d <= 1'b1;
@@ -182,6 +202,15 @@ module Decode(
                     mem_write_d <= 1'b0;
                     branch_d <= 1'b0;
                     alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b10;
+                    reg_dst_d <= 1'b0;
+                end
+                `BEQ: begin
+                    reg_write_d <= 1'b0;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b1;
+                    alu_control_d <= 4'b0001;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
                 end

@@ -2,7 +2,7 @@
 module InstMemory(
     input   logic   clk,
     input   logic   rst,
-    input   logic   reset,
+    input   logic   stall,
     input   logic   [31:0] addr,
     output  logic   err,
     output  logic   [31:0] r_data
@@ -15,8 +15,8 @@ module InstMemory(
 
     logic [63:0] expanded_addr = {32'b0, addr};
 
-    always_ff @(posedge clk, negedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk) begin
+        if (rst || stall) begin
             r_data <= 32'b0;
         end else begin
             logic [63:0] data;

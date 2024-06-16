@@ -13,7 +13,7 @@ module WriteBack(
     logic   mem_to_reg_w;
     logic   [31:0] read_data_w;
 
-    always_ff @(posedge clk, negedge rst) begin
+    always_ff @(posedge clk) begin
         if (rst) begin
             reg_write_w <= 1'b0;
             mem_to_reg_w <= 1'b0;

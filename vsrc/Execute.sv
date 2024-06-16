@@ -14,6 +14,7 @@ module Execute(
     input   logic   [3:0] alu_control_d,
     input   logic   [1:0] alu_src_d,
     input   logic   reg_dst_d,
+    input   logic   [31:0] pc_plus_4d,
     input   logic   forward_src_a_enabled,
     input   logic   [31:0]forward_src_a,
     input   logic   forward_src_b_enabled,
@@ -25,7 +26,8 @@ module Execute(
     output  logic   mem_to_reg_e,
     output  logic   mem_write_e,
     output  logic   branch_e,
-    output  logic   zero_e
+    output  logic   zero_e,
+    output  logic   [31:0] pc_branch_e
 );
     logic [3:0]alu_control_e;
     logic [1:0]alu_src_e;
@@ -35,8 +37,8 @@ module Execute(
     logic [4:0]rt_e;
     logic [4:0]rd_e;
     logic [31:0]imm_e;
-    logic [31:0] src1_e;
-    logic [31:0] src2_e;
+    logic [31:0]src1_e;
+    logic [31:0]src2_e;
     logic [4:0]shamt_e;
 
     assign src1_e = alu_src_e[0] ? {27'b0, shamt_e} : rd1_e;
@@ -44,7 +46,7 @@ module Execute(
     assign write_data_e = rd2_e;
     assign write_reg_e = reg_dst_e ? rd_e : rt_e;
 
-    always_ff @(posedge clk, negedge rst) begin
+    always_ff @(posedge clk) begin
         if (rst) begin
             reg_write_e <= 1'b0;
             mem_to_reg_e <= 1'b0;
@@ -59,6 +61,7 @@ module Execute(
             rd_e <= 5'b0;
             imm_e <= 32'b0;
             shamt_e <= 5'b0;
+            pc_branch_e <= 32'b0;
         end else begin
             reg_write_e <= reg_write_d;
             mem_to_reg_e <= mem_to_reg_d;
@@ -67,6 +70,7 @@ module Execute(
             alu_control_e <= alu_control_d;
             alu_src_e <= alu_src_d;
             reg_dst_e <= reg_dst_d;
+            pc_branch_e <= pc_plus_4d + (imm_d << 2);
 
             if (forward_src_a_enabled) begin
                 rd1_e <= forward_src_a;
@@ -94,6 +98,6 @@ module Execute(
         .out(alu_out_e)
     );
 
-    assign zero_e = 1'b0;
+    assign zero_e = alu_out_e == 32'b0 ? 1 : 0;
 
 endmodule

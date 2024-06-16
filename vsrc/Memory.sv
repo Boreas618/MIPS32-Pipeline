@@ -1,5 +1,5 @@
 /* verilator lint_off UNUSEDSIGNAL */
-
+/* verilator lint_off UNDRIVEN */
 module Memory(
     input   logic   clk,
     input   logic   rst,
@@ -11,11 +11,15 @@ module Memory(
     input   logic   [31:0] write_data_e,
     input   logic   [4:0] write_reg_e,
     input   logic   zero_e,
+    input   logic   [31:0] pc_branch_e,
+    output  logic   stall,
     output  logic   [31:0] read_data_m,
     output  logic   [31:0] alu_out_m,
     output  logic   [4:0] write_reg_m,
     output  logic   reg_write_m,
-    output  logic   mem_to_reg_m
+    output  logic   mem_to_reg_m,
+    output  logic   [1:0] if_pc_src,
+    output  logic   [31:0] if_pc_branch_in
 );
     logic zero_m;
     logic [31:0] write_data_m;
@@ -23,7 +27,15 @@ module Memory(
     logic branch_m;
     logic err;
 
-    always_ff @(posedge clk, negedge rst) begin
+    always_ff @(posedge clk) begin  
+        if (zero_e && branch_e) begin
+            if_pc_src <= 2'b1;
+            if_pc_branch_in <= pc_branch_e;
+        end else begin
+            if_pc_src <= 2'b0;
+            if_pc_branch_in <= 32'b0;
+        end
+
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;
