@@ -12,6 +12,8 @@ module Memory(
     input   logic   [4:0] write_reg_e,
     input   logic   zero_e,
     input   logic   [31:0] pc_branch_e,
+    input   logic   [31:0] jump_addr_e,
+    input   logic   j_inst_e,
     output  logic   stall,
     output  logic   [31:0] read_data_m,
     output  logic   [31:0] alu_out_m,
@@ -28,6 +30,8 @@ module Memory(
     logic err;
 
     always @(*) begin
+        /*if_pc_src = ((zero_e && branch_e) || j_inst_e) ? 2'b1 : 2'b0;
+        if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : (j_inst_e ? jump_addr_e : 32'b0);*/
         if_pc_src = (zero_e && branch_e) ? 2'b1 : 2'b0;
         if_pc_branch_in = (zero_e && branch_e) ? pc_branch_e : 32'b0;
     end

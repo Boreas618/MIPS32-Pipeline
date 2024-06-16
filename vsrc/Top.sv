@@ -96,6 +96,8 @@ module Top (
     logic [31:0]imm_d;
     logic [4:0]shamt_d;
     logic [31:0]pc_plus_4d;
+    logic [31:0]jump_addr_d;
+    logic j_inst_d;
 
     Decode decode(
         .inst(inst),
@@ -121,7 +123,9 @@ module Top (
         .write_enabled(reg_write_w),
         .stall(stall),
         .pc_plus_4d(pc_plus_4d),
-        .resume(resume)
+        .resume(resume),
+        .jump_addr_d(jump_addr_d),
+        .j_inst_d(j_inst_d)
     );
 
     logic [31:0] alu_out_e;
@@ -133,6 +137,8 @@ module Top (
     logic branch_e;
     logic zero_e;
     logic [31:0] pc_branch_e;
+    logic [31:0]jump_addr_e;
+    logic j_inst_e;
 
     Execute execute (
         .clk(clk),
@@ -150,6 +156,8 @@ module Top (
         .alu_control_d(alu_control_d),
         .alu_src_d(alu_src_d),
         .reg_dst_d(reg_dst_d),
+        .jump_addr_d(jump_addr_d),
+        .j_inst_d(j_inst_d),
         .forward_src_a_enabled(forward_src_a_enabled),
         .forward_src_a(forward_src_a),
         .forward_src_b_enabled(forward_src_b_enabled),
@@ -163,7 +171,9 @@ module Top (
         .branch_e(branch_e),
         .zero_e(zero_e),
         .pc_plus_4d(pc_plus_4d),
-        .pc_branch_e(pc_branch_e)
+        .pc_branch_e(pc_branch_e),
+        .jump_addr_e(jump_addr_e),
+        .j_inst_e(j_inst_e)
     );
 
     logic [31:0] read_data_m;
@@ -191,7 +201,9 @@ module Top (
         .stall(stall),
         .if_pc_branch_in(if_pc_branch_in),
         .if_pc_src(if_pc_src),
-        .pc_branch_e(pc_branch_e)
+        .pc_branch_e(pc_branch_e),
+        .jump_addr_e(jump_addr_e),
+        .j_inst_e(j_inst_e)
     );
 
     logic [31:0] result_w;

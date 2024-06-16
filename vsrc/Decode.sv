@@ -27,19 +27,19 @@ module Decode(
     output  logic   [4:0]rd_d,
     output  logic   [31:0]imm_d,
     output  logic   [4:0]shamt_d,
-    output  logic   [31:0]pc_plus_4d
+    output  logic   [31:0]pc_plus_4d,
+    output  logic   [31:0]jump_addr_d,
+    output  logic   j_inst_d
 );
     logic [5:0] op, funct;
     logic [4:0] rs, rt, rd;
     logic [15:0] imm;
-    logic [25:0] jump_addr;
 
     assign op = inst[31:26];
     assign funct = inst[5:0];
     assign rs = inst[25:21];
     assign rt = inst[20:16];
     assign rd = inst[15:11];
-    assign jump_addr = inst[25:0];
 
     always_ff @(posedge clk) begin
         shamt_d <= inst[10:6];
@@ -48,10 +48,14 @@ module Decode(
         rd_d <= inst[15:11];
         imm <= inst[15:0];
         pc_plus_4d <= pc + 0;
+        jump_addr_d <= {pc[31:28], inst[25:0], 2'b0};
 
         if (stall && resume) begin
             stall <= 1'b0;
-        end else if (op == `BEQ) begin
+        end else if (op == `BEQ || op == `J || op == `JAL) begin
+            if (op == `J || op == `JAL) begin
+                j_inst_d <= 1'b1;
+            end
             stall <= 1'b1;
         end
 
@@ -265,7 +269,7 @@ module Decode(
                     mem_write_d <= 1'b0;
                     branch_d <= 1'b1;
                     alu_control_d <= 4'b0001;
-                    alu_src_d <= 2'b10;
+                    alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
                 end
                 `SW: begin
@@ -284,6 +288,15 @@ module Decode(
                     branch_d <= 1'b0;
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b10;
+                    reg_dst_d <= 1'b0;
+                end
+                `J: begin
+                    reg_write_d <= 1'b0;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b0;
+                    alu_control_d <= 4'b0000;
+                    alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
                 end
                 default: begin
