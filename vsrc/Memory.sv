@@ -13,7 +13,7 @@ module Memory(
     input   logic   zero_e,
     input   logic   [31:0] pc_branch_e,
     input   logic   [31:0] jump_addr_e,
-    input   logic   [1:0] j_inst_e,
+    input   logic   [3:0] branch_type_e,
     output  logic   [31:0] read_data_m,
     output  logic   [31:0] alu_out_m,
     output  logic   [4:0] write_reg_m,
@@ -27,22 +27,32 @@ module Memory(
     logic [31:0] write_data_m;
     logic mem_write_m;
     logic branch_m;
+    logic is_jump;
+    logic branch_take;
 
     always_comb begin
-        if_pc_src = ((zero_e|| j_inst_e != 2'b0) && branch_e) ? 2'b1 : 2'b0;
+        is_jump = (branch_type_e == 4'b0001) || (branch_type_e == 4'b0010) || (branch_type_e == 4'b0011);
+        branch_take = (branch_e) && ((zero_e && branch_type_e == 4'b0100) || (!zero_e && branch_type_e == 4'b0101));
 
-        if (zero_e && branch_e) begin
-            if_pc_branch_in = pc_branch_e;
-        end else if (j_inst_e == 2'b11 && branch_e) begin
-            if_pc_branch_in = alu_out_e;
-        end else if ((j_inst_e == 2'b10 || j_inst_e == 2'b01) && branch_e) begin
-            if_pc_branch_in = jump_addr_e;
+        if_pc_src = (is_jump || branch_take) ? 2'b1 : 2'b0;
+
+        if (branch_e) begin
+            if (branch_take) begin
+                if_pc_branch_in = pc_branch_e;
+            end else if (branch_type_e == 4'b0011) begin
+                if_pc_branch_in = alu_out_e;
+            end else if (branch_type_e == 4'b0010 || branch_type_e == 4'b0001) begin
+                if_pc_branch_in = jump_addr_e;
+            end else begin
+                if_pc_branch_in = 32'b0;
+            end
         end else begin
             if_pc_branch_in = 32'b0;
         end
     end
 
     always_ff @(posedge clk) begin
+        $display("if_pc_src %0x if_pc_branch_in %0x, pc_branch_e %0x zero_e %0x branch_type_e %0x", if_pc_src, if_pc_branch_in, pc_branch_e, zero_e, branch_type_e);
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;

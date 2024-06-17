@@ -2,15 +2,30 @@
 .global _start
 
 _start:
-    addiu $4, $4, 1
+    li $4, 4
+    li $5, 5
     lui $t0, %hi(target)
     ori $t0, $t0, %lo(target)
     jr $t0
-
     addiu $5, $5, 2
-    addiu $6, $6, 3
 
-.org 0x200800
+.org 0x4040
+wrong_answer:
+    nop
+    nop
+
+.org 0x8080
+correct_result:
+    nop
+    nop
+
+.org 0x20800
 target:
-    addiu $7, $7, 4
-    addiu $8, $8, 5
+    addiu $5, $5, 1
+    addiu $5, $5, 1
+    addiu $5, $5, 1
+    addu $5, $5, $4
+
+    li $6, 12
+    beq $5, $6, correct_result
+    j wrong_answer

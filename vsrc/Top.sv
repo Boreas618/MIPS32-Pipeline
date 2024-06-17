@@ -82,7 +82,6 @@ module Top (
             last_pc <= pc;
             case (if_pc_src)
                 2'h0: begin
-                    $display("%0x", dmem_stall);
                     pc <= (branch_stall || imem_stall || dmem_stall) ? pc : pc + 32'd4;
                 end
                 2'h1: begin
@@ -121,7 +120,7 @@ module Top (
     logic [4:0]shamt_d;
     logic [31:0]pc_plus_4d;
     logic [31:0]jump_addr_d;
-    logic [1:0] j_inst_d;
+    logic [3:0] branch_type_d;
 
     Decode decode(
         .inst(inst),
@@ -151,7 +150,7 @@ module Top (
         .branch_resume(branch_resume),
         .dmem_resume(dmem_resume),
         .jump_addr_d(jump_addr_d),
-        .j_inst_d(j_inst_d)
+        .branch_type_d(branch_type_d)
     );
 
     logic [31:0] alu_out_e;
@@ -164,7 +163,7 @@ module Top (
     logic zero_e;
     logic [31:0] pc_branch_e;
     logic [31:0]jump_addr_e;
-    logic [1:0] j_inst_e;
+    logic [3:0] branch_type_e;
 
     Execute execute (
         .clk(clk),
@@ -183,7 +182,7 @@ module Top (
         .alu_src_d(alu_src_d),
         .reg_dst_d(reg_dst_d),
         .jump_addr_d(jump_addr_d),
-        .j_inst_d(j_inst_d),
+        .branch_type_d(branch_type_d),
         .forward_src_a_enabled(forward_src_a_enabled),
         .forward_src_a(forward_src_a),
         .forward_src_b_enabled(forward_src_b_enabled),
@@ -199,7 +198,7 @@ module Top (
         .pc_plus_4d(pc_plus_4d),
         .pc_branch_e(pc_branch_e),
         .jump_addr_e(jump_addr_e),
-        .j_inst_e(j_inst_e)
+        .branch_type_e(branch_type_e)
     );
 
     logic [31:0] read_data_m;
@@ -229,7 +228,7 @@ module Top (
         .if_pc_src(if_pc_src),
         .pc_branch_e(pc_branch_e),
         .jump_addr_e(jump_addr_e),
-        .j_inst_e(j_inst_e),
+        .branch_type_e(branch_type_e),
         .dmem_status(dmem_status)
     );
 

@@ -9,6 +9,8 @@ NORMAL = "\033[0m"
 
 if __name__ == "__main__":
     tests = [
+        "./tests/jr/jr.bin",
+        "./tests/bitwise/bitwise.bin",
         "./tests/addiu/addiu.bin",
         "./tests/addu/addu.bin",
         "./tests/load_store/load_store.bin",
@@ -19,7 +21,6 @@ if __name__ == "__main__":
     
     for i, t in enumerate(tests):
         cmd = sys.argv[1] + " " + t
-        print(cmd)
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL)
         p.wait()
         if p.returncode != 0:
