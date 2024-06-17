@@ -18,7 +18,7 @@ module Hazard(
     output  logic   forward_src_b_enabled,
     output  logic   [31:0] forward_src_b
 );
-    always @(*) begin
+    always_comb begin
         if (reg_write_e && write_reg_e == rs_d) begin
             forward_src_a_enabled = 1'b1;
             forward_src_a = alu_out_e;

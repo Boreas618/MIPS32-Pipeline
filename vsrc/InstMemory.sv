@@ -12,7 +12,7 @@ module InstMemory(
     output  logic   [1:0] r_data_status
 );
 
-    parameter latency_cycles = 4;
+    parameter latency_cycles = 2;
 
     logic [7:0] cycle_counter;
 
@@ -38,9 +38,9 @@ module InstMemory(
             r_data <= 32'b0;
         end else begin
             if (r_data_status == 2'b0) begin
-            r_data_status <= 2'b1;
-            cycle_counter <= 8'b0;
-            r_data <= 32'b0;
+                r_data_status <= 2'b1;
+                cycle_counter <= 8'b0;
+                r_data <= 32'b0;
             end else if (r_data_status == 2'b1) begin
                 if (cycle_counter == latency_cycles) begin
                     logic [63:0] data;

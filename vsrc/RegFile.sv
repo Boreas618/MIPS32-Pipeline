@@ -24,8 +24,19 @@ module RegFile(
     end
 
     always_ff @(posedge clk) begin
-        data_1 <= regs[read_addr_1];
-        data_2 <= regs[read_addr_2];
+        if (write_enabled && write_addr == read_addr_1) begin
+            data_1 <= write_data;
+        end else begin
+            data_1 <= regs[read_addr_1];
+        end
+
+        if (write_enabled && write_addr == read_addr_2) begin
+            data_2 <= write_data;
+        end else begin
+            data_2 <= regs[read_addr_2];
+        end
+        
+        // data_2 <= regs[read_addr_2];
     end
 
     always_ff @(posedge clk) begin

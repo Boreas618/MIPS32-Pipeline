@@ -56,7 +56,8 @@ module Top (
         .forward_src_b(forward_src_b)
     );
     
-    /* Instruction Fetch Stage.
+    /* 
+     * Instruction Fetch Stage.
      * 
      * `inst`: the current instruction with MIPS encoding specification.
      * `if_pc_src`: select the next PC.
@@ -89,7 +90,7 @@ module Top (
         end
     end
 
-    assign mem_stall = (inst_data_status == 2'b01);
+    assign mem_stall = ~(inst_data_status == 2'b10);
 
     InstMemory inst_mem (
         .rst(rst),
@@ -218,7 +219,6 @@ module Top (
         .reg_write_m(reg_write_m),
         .mem_to_reg_m(mem_to_reg_m),
         .write_reg_m(write_reg_m),
-        .stall(branch_stall),
         .if_pc_branch_in(if_pc_branch_in),
         .if_pc_src(if_pc_src),
         .pc_branch_e(pc_branch_e),

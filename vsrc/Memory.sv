@@ -14,7 +14,6 @@ module Memory(
     input   logic   [31:0] pc_branch_e,
     input   logic   [31:0] jump_addr_e,
     input   logic   [1:0] j_inst_e,
-    output  logic   stall,
     output  logic   [31:0] read_data_m,
     output  logic   [31:0] alu_out_m,
     output  logic   [4:0] write_reg_m,
