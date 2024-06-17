@@ -13,6 +13,7 @@ if __name__ == "__main__":
         "./tests/addu/addu.bin",
         "./tests/sw/sw.bin",
         "./tests/beq/beq.bin",
+        "./tests/lui/lui.bin"
     ]
     good = True
     
