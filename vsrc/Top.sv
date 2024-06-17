@@ -28,7 +28,8 @@ module Top (
         end
     end
 
-    logic stall;
+    logic branch_stall;
+    logic mem_stall;
 
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
@@ -65,6 +66,7 @@ module Top (
     logic [1:0] if_pc_src;
     logic [31:0] if_pc_branch_in;
     logic resume;
+    logic [1:0] inst_data_status;
 
     assign resume = branch_e;
 
@@ -75,10 +77,9 @@ module Top (
             last_pc <= pc;
             case (if_pc_src)
                 2'h0: begin
-                    pc <= stall ? pc : pc + 32'd4;
+                    pc <= (branch_stall || mem_stall) ? pc : pc + 32'd4;
                 end
                 2'h1: begin
-                    // resume <= 1'b1;
                     pc <= if_pc_branch_in;
                 end
                 default: begin
@@ -88,13 +89,15 @@ module Top (
         end
     end
 
+    assign mem_stall = (inst_data_status == 2'b01);
+
     InstMemory inst_mem (
         .rst(rst),
         .clk(clk),
-        .stall(stall),
+        .stall(branch_stall),
         .addr(pc),
         .r_data(inst),
-        .err(m_err)
+        .r_data_status(inst_data_status)
     );
 
     logic reg_write_d;
@@ -138,7 +141,7 @@ module Top (
         .write_reg(write_reg_w),
         .write_data(result_w),
         .write_enabled(reg_write_w),
-        .stall(stall),
+        .stall(branch_stall),
         .pc_plus_4d(pc_plus_4d),
         .resume(resume),
         .jump_addr_d(jump_addr_d),
@@ -215,7 +218,7 @@ module Top (
         .reg_write_m(reg_write_m),
         .mem_to_reg_m(mem_to_reg_m),
         .write_reg_m(write_reg_m),
-        .stall(stall),
+        .stall(branch_stall),
         .if_pc_branch_in(if_pc_branch_in),
         .if_pc_src(if_pc_src),
         .pc_branch_e(pc_branch_e),

@@ -3,10 +3,18 @@ module InstMemory(
     input   logic   clk,
     input   logic   rst,
     input   logic   stall,
+
+    /* Signals for memory access requests. */
     input   logic   [31:0] addr,
-    output  logic   err,
-    output  logic   [31:0] r_data
+
+    /* Signals for memory access responses. */
+    output  logic   [31:0] r_data,
+    output  logic   [1:0] r_data_status
 );
+
+    parameter latency_cycles = 4;
+
+    logic [7:0] cycle_counter;
 
     import "DPI-C" function void mm_read(
         input longint addr,
@@ -16,14 +24,40 @@ module InstMemory(
     logic [63:0] expanded_addr = {32'b0, addr};
 
     always_ff @(posedge clk) begin
-        if (rst || stall) begin
+        /*if (rst || stall) begin
             r_data <= 32'b0;
         end else begin
             logic [63:0] data;
             mm_read(expanded_addr, data);
             r_data <= data[31:0];
+        end*/
+
+        if (rst || stall) begin
+            r_data_status <= 2'b0;
+            cycle_counter <= 8'b0;
+            r_data <= 32'b0;
+        end else begin
+            if (r_data_status == 2'b0) begin
+            r_data_status <= 2'b1;
+            cycle_counter <= 8'b0;
+            r_data <= 32'b0;
+            end else if (r_data_status == 2'b1) begin
+                if (cycle_counter == latency_cycles) begin
+                    logic [63:0] data;
+                    mm_read(expanded_addr, data);
+                    r_data <= data[31:0];
+                    r_data_status <= 2'b10;
+                    cycle_counter <= 8'b0;
+                end else begin
+                    cycle_counter <= cycle_counter + 1;
+                end
+            end else begin
+                r_data_status <= 2'b0;
+                cycle_counter <= 8'b0;
+                r_data <= 32'b0;
+            end
         end
-        err <= 1'b0;
+
     end
 
 endmodule
