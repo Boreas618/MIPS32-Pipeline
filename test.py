@@ -8,7 +8,10 @@ RED = "\033[91m"
 NORMAL = "\033[0m"
 
 if __name__ == "__main__":
-    tests = ["./tests/addu/addu.bin"]
+    tests = [
+        "./tests/addu/addu.bin",
+        "./tests/sw/sw.bin",
+    ]
     good = True
     
     for i, t in enumerate(tests):

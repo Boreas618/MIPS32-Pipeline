@@ -29,7 +29,14 @@ module Top (
     end
 
     logic branch_stall;
-    logic mem_stall;
+    logic imem_stall;
+    logic dmem_stall;
+    logic branch_resume;
+    logic dmem_resume;
+
+    assign imem_stall = ~(imem_status == 2'b10);
+    assign branch_resume = branch_e;
+    assign dmem_resume = dmem_status == 2'b10;
 
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
@@ -66,10 +73,7 @@ module Top (
     logic [31:0] inst;
     logic [1:0] if_pc_src;
     logic [31:0] if_pc_branch_in;
-    logic resume;
-    logic [1:0] inst_data_status;
-
-    assign resume = branch_e;
+    logic [1:0] imem_status;
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -78,7 +82,8 @@ module Top (
             last_pc <= pc;
             case (if_pc_src)
                 2'h0: begin
-                    pc <= (branch_stall || mem_stall) ? pc : pc + 32'd4;
+                    $display("%0x", dmem_stall);
+                    pc <= (branch_stall || imem_stall || dmem_stall) ? pc : pc + 32'd4;
                 end
                 2'h1: begin
                     pc <= if_pc_branch_in;
@@ -90,15 +95,13 @@ module Top (
         end
     end
 
-    assign mem_stall = ~(inst_data_status == 2'b10);
-
     InstMemory inst_mem (
         .rst(rst),
         .clk(clk),
         .stall(branch_stall),
         .addr(pc),
         .r_data(inst),
-        .r_data_status(inst_data_status)
+        .r_data_status(imem_status)
     );
 
     logic reg_write_d;
@@ -142,9 +145,11 @@ module Top (
         .write_reg(write_reg_w),
         .write_data(result_w),
         .write_enabled(reg_write_w),
-        .stall(branch_stall),
+        .branch_stall(branch_stall),
+        .dmem_stall(dmem_stall),
         .pc_plus_4d(pc_plus_4d),
-        .resume(resume),
+        .branch_resume(branch_resume),
+        .dmem_resume(dmem_resume),
         .jump_addr_d(jump_addr_d),
         .j_inst_d(j_inst_d)
     );
@@ -202,6 +207,7 @@ module Top (
     logic reg_write_m;
     logic mem_to_reg_m;
     logic [4:0] write_reg_m;
+    logic [1:0] dmem_status;
 
     Memory memory(
         .clk(clk),
@@ -223,7 +229,8 @@ module Top (
         .if_pc_src(if_pc_src),
         .pc_branch_e(pc_branch_e),
         .jump_addr_e(jump_addr_e),
-        .j_inst_e(j_inst_e)
+        .j_inst_e(j_inst_e),
+        .dmem_status(dmem_status)
     );
 
     logic [31:0] result_w;
@@ -243,7 +250,8 @@ module Top (
         .reg_write_w(reg_write_w)
     );
 
-    /* Legacy Debug functionalities.
+    /* 
+     * Legacy Debug functionalities.
      *
      * Note that this part is planned to be removed in the future and
      * switch to the DebugPort module.

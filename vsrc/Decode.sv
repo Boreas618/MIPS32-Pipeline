@@ -11,8 +11,10 @@ module Decode(
     input   logic   [4:0]write_reg,
     input   logic   [31:0]write_data,
     input   logic   write_enabled,
-    input   logic   resume,
-    output  logic   stall,
+    input   logic   branch_resume,
+    input   logic   dmem_resume,
+    output  logic   branch_stall,
+    output  logic   dmem_stall,
     output  logic   reg_write_d,
     output  logic   mem_to_reg_d,
     output  logic   mem_write_d,
@@ -50,8 +52,8 @@ module Decode(
         pc_plus_4d <= pc + 0;
         jump_addr_d <= {pc[31:28], inst[25:0], 2'b0};
 
-        if (stall && resume) begin
-            stall <= 1'b0;
+        if (branch_stall && branch_resume) begin
+            branch_stall <= 1'b0;
         end else if (op == `BEQ || op == `J || op == `JAL || (op == `RTYPE && funct == `JR)) begin
             if (op == `J) begin
                 j_inst_d <= 2'b01;
@@ -60,7 +62,13 @@ module Decode(
             end else if (op == `RTYPE && funct == `JR) begin
                 j_inst_d <= 2'b11;
             end
-            stall <= 1'b1;
+            branch_stall <= 1'b1;
+        end
+
+        if (dmem_stall && dmem_resume) begin
+            dmem_stall <= 1'b0;
+        end else if (op == `SW  || op == `LW) begin
+            dmem_stall <= 1'b1;
         end
 
         if (rst) begin

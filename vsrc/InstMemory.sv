@@ -12,8 +12,11 @@ module InstMemory(
     output  logic   [1:0] r_data_status
 );
 
-    parameter latency_cycles = 2;
-
+    /* 
+     * Note that these constructs are used for simulating the memory
+     * access latencies.
+     */
+    parameter latency_cycles = 1;
     logic [7:0] cycle_counter;
 
     import "DPI-C" function void mm_read(
@@ -24,14 +27,6 @@ module InstMemory(
     logic [63:0] expanded_addr = {32'b0, addr};
 
     always_ff @(posedge clk) begin
-        /*if (rst || stall) begin
-            r_data <= 32'b0;
-        end else begin
-            logic [63:0] data;
-            mm_read(expanded_addr, data);
-            r_data <= data[31:0];
-        end*/
-
         if (rst || stall) begin
             r_data_status <= 2'b0;
             cycle_counter <= 8'b0;
@@ -57,7 +52,6 @@ module InstMemory(
                 r_data <= 32'b0;
             end
         end
-
     end
 
 endmodule

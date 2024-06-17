@@ -20,13 +20,13 @@ module Memory(
     output  logic   reg_write_m,
     output  logic   mem_to_reg_m,
     output  logic   [1:0] if_pc_src,
-    output  logic   [31:0] if_pc_branch_in
+    output  logic   [31:0] if_pc_branch_in,
+    output  logic   [1:0] dmem_status
 );
     logic zero_m;
     logic [31:0] write_data_m;
     logic mem_write_m;
     logic branch_m;
-    logic err;
 
     always_comb begin
         if_pc_src = ((zero_e|| j_inst_e != 2'b0) && branch_e) ? 2'b1 : 2'b0;
@@ -70,8 +70,8 @@ module Memory(
         .write_enabled(mem_write_m),
         .addr(alu_out_m),
         .w_data(write_data_m),
-        .err(err),
-        .r_data(read_data_m)
+        .r_data(read_data_m),
+        .status(dmem_status)
     );
 
 endmodule
