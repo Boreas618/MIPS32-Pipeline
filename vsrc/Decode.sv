@@ -49,7 +49,7 @@ module Decode(
         rt_d <= inst[20:16];
         rd_d <= inst[15:11];
         imm <= inst[15:0];
-        pc_plus_4d <= pc + 0;
+        pc_plus_4d <= pc + 4;
         jump_addr_d <= {pc[31:28], inst[25:0], 2'b0};
 
         if (branch_stall && branch_resume) begin

@@ -9,8 +9,10 @@ NORMAL = "\033[0m"
 
 if __name__ == "__main__":
     tests = [
+        "./tests/addiu/addiu.bin",
         "./tests/addu/addu.bin",
         "./tests/sw/sw.bin",
+        "./tests/beq/beq.bin",
     ]
     good = True
     
