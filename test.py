@@ -11,8 +11,8 @@ if __name__ == "__main__":
     tests = [
         "./tests/addiu/addiu.bin",
         "./tests/addu/addu.bin",
-        "./tests/sw/sw.bin",
-        "./tests/beq/beq.bin",
+        "./tests/load_store/load_store.bin",
+        "./tests/branch/branch.bin",
         "./tests/lui/lui.bin"
     ]
     good = True
