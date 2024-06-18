@@ -38,11 +38,13 @@ inline uint64_t guest_to_host(uint64_t addr)
 extern "C" void mm_read(uint64_t addr, uint64_t *data)
 {
 	uint64_t host_addr = guest_to_host(addr);
+	printf("Reading from %x\n", host_addr);
 	*data = *(uint64_t *)host_addr;
 }
 
 extern "C" void mm_write(uint64_t addr, uint32_t data)
 {
 	uint64_t host_addr = guest_to_host(addr);
+	printf("Writing to %x\n", host_addr);
 	*(uint32_t *)host_addr = data;
 }

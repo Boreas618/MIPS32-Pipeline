@@ -4,16 +4,20 @@
 _start:
     li $1, 1
     li $3, 3
-    li $6, 6
+    li $5, 5
     li $7, 7
 
-    addu $6, $3, $1
-    addu $6, $6, $6
-    addu $7, $6, $1
-    addu $8, $7, $6
+    addu $5, $3, $1
+    addu $5, $5, $5
+    addu $7, $5, $1
+    addu $8, $7, $5
+    subu $8, $8, $1
+    subu $8, $8, $1
 
-    li $9, 17 
+    li $9, 15
     beq $8, $9, correct_result
+
+
     j wrong_answer
 
 .org 0x4040

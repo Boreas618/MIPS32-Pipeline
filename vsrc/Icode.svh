@@ -25,6 +25,7 @@
 `define LUI 6'b001111
 `define BEQ 6'b000100
 `define BNE 6'b000101
+`define BGEZ 6'b000001
 `define LW 6'b100011
 `define SW 6'b101011
 

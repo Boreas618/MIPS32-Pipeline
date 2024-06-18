@@ -54,7 +54,7 @@ module Decode(
 
         if (branch_stall && branch_resume) begin
             branch_stall <= 1'b0;
-        end else if (op == `BEQ || op == `BNE || op == `J || op == `JAL || (op == `RTYPE && funct == `JR)) begin
+        end else if (op == `BEQ || op == `BNE || op == `BGEZ || op == `J || op == `JAL || (op == `RTYPE && funct == `JR)) begin
             if (op == `J) begin
                 branch_type_d <= 4'b0001;
             end else if (op == `JAL) begin
@@ -65,6 +65,10 @@ module Decode(
                 branch_type_d <= 4'b0100;
             end else if (op == `BNE) begin
                 branch_type_d <= 4'b0101;
+            end else if (op == `BGEZ && inst[20:16] == 5'b1) begin
+                branch_type_d <= 4'b0110;
+            end else if (op == `BGEZ && inst[20:16] != 5'b1) begin
+                branch_type_d <= 4'b0111;
             end
             branch_stall <= 1'b1;
         end else begin
@@ -266,7 +270,7 @@ module Decode(
                     mem_write_d <= 1'b0;
                     branch_d <= 1'b0;
                     alu_control_d <= 4'b1001;
-                    alu_src_d <= 2'b10;
+                    alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
                 end
                 `SLTIU: begin
@@ -275,7 +279,7 @@ module Decode(
                     mem_write_d <= 1'b0;
                     branch_d <= 1'b0;
                     alu_control_d <= 4'b1010;
-                    alu_src_d <= 2'b10;
+                    alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
                 end
                 `LUI: begin
@@ -302,6 +306,15 @@ module Decode(
                     mem_write_d <= 1'b0;
                     branch_d <= 1'b1;
                     alu_control_d <= 4'b0001;
+                    alu_src_d <= 2'b00;
+                    reg_dst_d <= 1'b0;
+                end
+                `BGEZ: begin
+                    reg_write_d <= 1'b0;
+                    mem_to_reg_d <= 1'b0;
+                    mem_write_d <= 1'b0;
+                    branch_d <= 1'b1;
+                    alu_control_d <= 4'b1110;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
                 end
@@ -333,7 +346,7 @@ module Decode(
                     reg_dst_d <= 1'b0;
                 end
                 default: begin
-                    $display("Funct %0d not implemented.", op);
+                    $display("[PC: %0x] instruction %0x not implemented. ", pc, inst);
                 end
             endcase
         end

@@ -32,7 +32,7 @@ module Memory(
 
     always_comb begin
         is_jump = (branch_type_e == 4'b0001) || (branch_type_e == 4'b0010) || (branch_type_e == 4'b0011);
-        branch_take = (branch_e) && ((zero_e && branch_type_e == 4'b0100) || (!zero_e && branch_type_e == 4'b0101));
+        branch_take = (branch_e) && ((zero_e && branch_type_e == 4'b0100) ||(!zero_e && branch_type_e == 4'b0101) || (($signed(alu_out_e) >= 0) && branch_type_e == 4'b0110) || (($signed(alu_out_e) < 0) && branch_type_e == 4'b0111));
 
         if_pc_src = (is_jump || branch_take) ? 2'b1 : 2'b0;
 
@@ -52,7 +52,6 @@ module Memory(
     end
 
     always_ff @(posedge clk) begin
-        $display("if_pc_src %0x if_pc_branch_in %0x, pc_branch_e %0x zero_e %0x branch_type_e %0x", if_pc_src, if_pc_branch_in, pc_branch_e, zero_e, branch_type_e);
         if (rst) begin
             reg_write_m <= 1'b0;
             mem_to_reg_m <= 1'b0;

@@ -17,9 +17,16 @@ module RegFile(
     logic [31:0] regs[31:0];
     integer i;
     always_ff @(posedge clk) begin
-        for (i = 0; i < 31; i = i + 1) begin
-            if (rst)
-                regs[i] <= {27'b0, i};
+        if (rst) begin
+            for (i = 0; i <= 31; i = i + 1) begin
+                if (i == 32'd29) begin
+                    regs[i] <= 32'h8000;
+                end else if (i == 32'd31) begin
+                    regs[i] <= 32'h9080;
+                end else begin
+                    regs[i] <= 32'b0;
+                end
+            end
         end
     end
 
@@ -35,8 +42,6 @@ module RegFile(
         end else begin
             data_2 <= regs[read_addr_2];
         end
-        
-        // data_2 <= regs[read_addr_2];
     end
 
     always_ff @(posedge clk) begin
