@@ -1,3 +1,5 @@
+#include "config.h"
+
 .text
 .global _start
 
@@ -9,13 +11,8 @@ _start:
     jr $t0
     addiu $5, $5, 2
 
-.org 0x4040
-wrong_answer:
-    nop
-    nop
-
 .org 0x8080
-correct_result:
+exit:
     nop
     nop
 
@@ -27,5 +24,8 @@ target:
     addu $5, $5, $4
 
     li $6, 12
-    beq $5, $6, correct_result
-    j wrong_answer
+    li $2, MAGIC
+    beq $5, $6, exit
+
+    li $2, -1
+    j exit

@@ -1,3 +1,5 @@
+#include "config.h"
+
 int _start() {
     int array[] = {10, 7, 8, 9, 1, 5};
     int n = sizeof(array) / sizeof(array[0]);
@@ -38,12 +40,9 @@ int _start() {
         }
     }
 
-    int idx = 1;
-    while (idx < 6) {
+    for (int idx = 1; idx < 6; idx += 1)
         if (array[i] < array[i-1])
             return -1;
-        idx += 1;
-    }
 
-    return 0;
+    return MAGIC;
 }

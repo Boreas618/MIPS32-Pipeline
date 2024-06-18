@@ -1,4 +1,6 @@
 /* verilator lint_off WIDTHTRUNC */
+`include "Config.svh"
+
 module RegFile(
     input   logic   rst,
     input   logic   clk,
@@ -8,8 +10,12 @@ module RegFile(
     input   logic   [31:0]write_data,
     input   logic   write_enabled,
     output  logic   [31:0]data_1,
-    output  logic   [31:0]data_2
+    output  logic   [31:0]data_2,
+    output  logic   magic
 );
+
+    assign magic = (regs[2] == `MAGIC_NUM);
+    
     import "DPI-C" function void set_regs_ptr(input logic[31:0] r[]);
     initial begin set_regs_ptr(regs); end
 
@@ -20,9 +26,9 @@ module RegFile(
         if (rst) begin
             for (i = 0; i <= 31; i = i + 1) begin
                 if (i == 32'd29) begin
-                    regs[i] <= 32'h8000;
+                    regs[i] <= `STACK_BASE;
                 end else if (i == 32'd31) begin
-                    regs[i] <= 32'h9080;
+                    regs[i] <= `EXIT_ADDR;
                 end else begin
                     regs[i] <= 32'b0;
                 end

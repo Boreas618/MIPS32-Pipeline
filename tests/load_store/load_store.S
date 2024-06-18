@@ -1,3 +1,5 @@
+#include "config.h"
+
 .text
 .global _start
 
@@ -14,15 +16,13 @@ _start:
     lw $5, 0x2000($0)
 
     li $9, 8
-    beq $5, $9, correct_result
-    j wrong_answer
+    li $2, MAGIC
+    beq $5, $9, exit
 
-.org 0x4040
-wrong_answer:
-    nop
-    nop
+    li $2, -1
+    j exit
 
 .org 0x8080
-correct_result:
+exit:
     nop
     nop

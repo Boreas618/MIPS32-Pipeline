@@ -1,3 +1,5 @@
+#include "config.h"
+
 .text
 .global _start
 
@@ -23,15 +25,13 @@ skip:
     addu $10, $10, $7  # $10 = $10 + $7 (15 + 7 = 22)
     addu $10, $10, $8  # $10 = $10 + $8 (22 + 8 = 30)
 
-    beq $10, $9, correct_result
-    j wrong_answer
+    li $2, MAGIC
+    beq $10, $9, exit
 
-.org 0x4040
-wrong_answer:
-    nop
-    nop
+    li $2, -1
+    j exit
 
 .org 0x8080
-correct_result:
-    nop
-    nop
+exit:
+    nop  # No operation
+    nop  # No operation

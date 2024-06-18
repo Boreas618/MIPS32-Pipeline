@@ -1,6 +1,7 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off SYNCASYNCNET */
 /* verilator lint_off UNDRIVEN */
+`include "Config.svh"
 
 module Top (
     input	logic	rst,
@@ -13,15 +14,10 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
-    parameter start_addr = 32'h1000;
-
     always_comb begin
-        if (pc == start_addr + 32'h8080) begin
+        if (pc == `EXIT_ADDR) begin
             halt = 1'b1;
-            err = 1'b0;
-        end else if (pc == start_addr + 32'h4040) begin
-            halt = 1'b1;
-            err = 1'b1;
+            err = ~magic;
         end else begin
             halt = 1'b0;
             err = 1'b0;
@@ -77,7 +73,7 @@ module Top (
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            pc <= start_addr;
+            pc <= `TEXT_BASE;
         end else begin
             last_pc <= pc;
             case (if_pc_src)
@@ -88,7 +84,7 @@ module Top (
                     pc <= if_pc_branch_in;
                 end
                 default: begin
-                    pc <= start_addr;
+                    pc <= `TEXT_BASE;
                 end
             endcase  
         end
@@ -121,6 +117,7 @@ module Top (
     logic [31:0]pc_plus_4d;
     logic [31:0]jump_addr_d;
     logic [3:0] branch_type_d;
+    logic magic;
 
     Decode decode(
         .inst(inst),
@@ -150,7 +147,8 @@ module Top (
         .branch_resume(branch_resume),
         .dmem_resume(dmem_resume),
         .jump_addr_d(jump_addr_d),
-        .branch_type_d(branch_type_d)
+        .branch_type_d(branch_type_d),
+        .magic(magic)
     );
 
     logic [31:0] alu_out_e;

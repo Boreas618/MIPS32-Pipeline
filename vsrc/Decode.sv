@@ -31,7 +31,8 @@ module Decode(
     output  logic   [4:0]shamt_d,
     output  logic   [31:0]pc_plus_4d,
     output  logic   [31:0]jump_addr_d,
-    output  logic   [3:0]branch_type_d
+    output  logic   [3:0]branch_type_d,
+    output  logic   magic
 );
     logic [5:0] op, funct;
     logic [4:0] rs, rt, rd;
@@ -361,7 +362,8 @@ module Decode(
         .write_data(write_data),
         .write_enabled(write_enabled),
         .data_1(rd1_d),
-        .data_2(rd2_d)
+        .data_2(rd2_d),
+        .magic(magic)
     );
 
     SignExtend extend(

@@ -1,5 +1,7 @@
-    .text
-    .global _start
+#include "config.h"
+
+.text
+.global _start
 
 _start:
     li $1, 1
@@ -13,20 +15,16 @@ _start:
     addu $8, $7, $5
     subu $8, $8, $1
     subu $8, $8, $1
-
     li $9, 15
-    beq $8, $9, correct_result
 
+    li $2, MAGIC
+    beq $8, $9, exit
 
-    j wrong_answer
-
-.org 0x4040
-wrong_answer:
-    nop
-    nop
+    li $2, -1
+    j exit
 
 .org 0x8080
-correct_result:
-    nop
-    nop
+exit:
+    nop  # No operation
+    nop  # No operation
 
