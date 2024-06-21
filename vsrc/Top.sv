@@ -34,7 +34,7 @@ module Top (
     assign imem_stall = ~(imem_status == 2'b10);
     assign branch_resume = branch_e;
     assign dmem_resume = dmem_status == 2'b10;
-    assign stall = imem_stall || dmem_stall || branch_stall;
+    assign stall = branch_stall || imem_stall || dmem_stall;
 
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
@@ -95,7 +95,7 @@ module Top (
     InstMemory inst_mem (
         .rst(rst),
         .clk(clk),
-        .stall(branch_stall),
+        .stall(dmem_stall || branch_stall),
         .addr(pc),
         .r_data(inst),
         .r_data_status(imem_status)

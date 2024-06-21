@@ -64,7 +64,7 @@ module Memory(
             write_reg_m <= 5'b0;
             zero_m <= 1'b0;
             mem_access_m <= 1'b0;
-        end else begin
+        end else if ((~mem_access_m) || (mem_access_m && dmem_status == 2'b10)) begin
             reg_write_m <= reg_write_e;
             mem_to_reg_m <= mem_to_reg_e;
             mem_write_m <= mem_write_e;
@@ -81,7 +81,7 @@ module Memory(
         .reset(rst),
         .clk(clk),
         .write_enabled(mem_write_m),
-        .valid(1),
+        .valid(mem_access_m),
         .addr(alu_out_m),
         .w_data(write_data_m),
         .r_data(read_data_m),

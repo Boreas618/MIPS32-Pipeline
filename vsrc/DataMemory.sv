@@ -14,7 +14,7 @@ module DataMemory(
     output  logic   [1:0] status
 );
 
-    parameter latency_cycles = 1;
+    parameter latency_cycles = 10;
     logic [7:0] cycle_counter;
 
     import "DPI-C" function void mm_read(
@@ -34,7 +34,7 @@ module DataMemory(
             status <= 2'b0;
             cycle_counter <= 8'b0;
         end else begin
-            if (status == 2'b0) begin
+            if (status == 2'b0 && valid) begin
                 status <= 2'b1;
                 cycle_counter <= 8'b1;
             end else if (status == 2'b1) begin

@@ -351,7 +351,7 @@ module Decode(
                     mem_write_d <= 1'b1;
                     branch_d <= 1'b0;
                     alu_control_d <= 4'b0000;
-                    alu_src_d <= 2'b11;
+                    alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
                     mem_access_d <= 1'b1;
                 end
