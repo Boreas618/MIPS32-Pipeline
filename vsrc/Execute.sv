@@ -15,6 +15,7 @@ module Execute(
     input   logic   [1:0] alu_src_d,
     input   logic   reg_dst_d,
     input   logic   [31:0] pc_plus_4d,
+    input   logic   mem_access_d,
     input   logic   forward_src_a_enabled,
     input   logic   [31:0] forward_src_a,
     input   logic   forward_src_b_enabled,
@@ -31,7 +32,8 @@ module Execute(
     output  logic   zero_e,
     output  logic   [31:0] pc_branch_e,
     output  logic   [31:0] jump_addr_e,
-    output  logic   [3:0] branch_type_e
+    output  logic   [3:0] branch_type_e,
+    output  logic   mem_access_e
 );
     logic [3:0]alu_control_e;
     logic [1:0]alu_src_e;
@@ -68,6 +70,7 @@ module Execute(
             pc_branch_e <= 32'b0;
             jump_addr_e <= 32'b0;
             branch_type_e <= 4'b0;
+            mem_access_e <= 1'b0;
         end else begin
             reg_write_e <= reg_write_d;
             mem_to_reg_e <= mem_to_reg_d;
@@ -79,6 +82,7 @@ module Execute(
             pc_branch_e <= pc_plus_4d + (imm_d << 2);
             jump_addr_e <= jump_addr_d;
             branch_type_e <= branch_type_d;
+            mem_access_e <= mem_access_d;
 
             if (forward_src_a_enabled) begin
                 rd1_e <= forward_src_a;

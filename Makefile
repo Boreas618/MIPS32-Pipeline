@@ -2,7 +2,7 @@ default: all
 
 # ARCH can be dummy, mips or loongarch
 ARCH = mips
-IMG = $(abspath ./tests/addiu/addiu.bin)
+IMG = $(abspath ./tests/load_store/load_store.bin)
 
 ROOT = $(abspath .)
 CSRCS = $(shell find $(ROOT)/csrc -name "*.c" -o -name "*.cpp" -o -name "*.cc")

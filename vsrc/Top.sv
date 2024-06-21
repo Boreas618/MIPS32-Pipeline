@@ -29,10 +29,12 @@ module Top (
     logic dmem_stall;
     logic branch_resume;
     logic dmem_resume;
+    logic stall;
 
     assign imem_stall = ~(imem_status == 2'b10);
     assign branch_resume = branch_e;
     assign dmem_resume = dmem_status == 2'b10;
+    assign stall = imem_stall || dmem_stall || branch_stall;
 
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
@@ -78,7 +80,7 @@ module Top (
             last_pc <= pc;
             case (if_pc_src)
                 2'h0: begin
-                    pc <= (branch_stall || imem_stall || dmem_stall) ? pc : pc + 32'd4;
+                    pc <= stall ? pc : pc + 32'd4;
                 end
                 2'h1: begin
                     pc <= if_pc_branch_in;
@@ -117,6 +119,7 @@ module Top (
     logic [31:0]pc_plus_4d;
     logic [31:0]jump_addr_d;
     logic [3:0] branch_type_d;
+    logic mem_access_d;
     logic magic;
 
     Decode decode(
@@ -148,7 +151,8 @@ module Top (
         .dmem_resume(dmem_resume),
         .jump_addr_d(jump_addr_d),
         .branch_type_d(branch_type_d),
-        .magic(magic)
+        .magic(magic),
+        .mem_access_d(mem_access_d)
     );
 
     logic [31:0] alu_out_e;
@@ -162,6 +166,7 @@ module Top (
     logic [31:0] pc_branch_e;
     logic [31:0]jump_addr_e;
     logic [3:0] branch_type_e;
+    logic mem_access_e;
 
     Execute execute (
         .clk(clk),
@@ -181,6 +186,7 @@ module Top (
         .reg_dst_d(reg_dst_d),
         .jump_addr_d(jump_addr_d),
         .branch_type_d(branch_type_d),
+        .mem_access_d(mem_access_d),
         .forward_src_a_enabled(forward_src_a_enabled),
         .forward_src_a(forward_src_a),
         .forward_src_b_enabled(forward_src_b_enabled),
@@ -196,7 +202,8 @@ module Top (
         .pc_plus_4d(pc_plus_4d),
         .pc_branch_e(pc_branch_e),
         .jump_addr_e(jump_addr_e),
-        .branch_type_e(branch_type_e)
+        .branch_type_e(branch_type_e),
+        .mem_access_e(mem_access_e)
     );
 
     logic [31:0] read_data_m;
@@ -209,6 +216,7 @@ module Top (
     Memory memory(
         .clk(clk),
         .rst(rst),
+        .mem_access_e(mem_access_e),
         .reg_write_e(reg_write_e),
         .mem_to_reg_e(mem_to_reg_e),
         .mem_write_e(mem_write_e),

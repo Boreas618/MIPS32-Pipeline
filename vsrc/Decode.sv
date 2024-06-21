@@ -32,6 +32,7 @@ module Decode(
     output  logic   [31:0]pc_plus_4d,
     output  logic   [31:0]jump_addr_d,
     output  logic   [3:0]branch_type_d,
+    output  logic   mem_access_d,
     output  logic   magic
 );
     logic [5:0] op, funct;
@@ -90,6 +91,7 @@ module Decode(
             alu_control_d <= 4'b0000;
             alu_src_d <= 2'b00;
             reg_dst_d <= 1'b1;
+            mem_access_d <= 1'b0;
         end 
         else if (op == `RTYPE) begin
             case(funct)
@@ -105,6 +107,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `ADDU: begin
                     reg_write_d <= 1'b1;
@@ -114,6 +117,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `SUBU: begin
                     reg_write_d <= 1'b1;
@@ -123,6 +127,7 @@ module Decode(
                     alu_control_d <= 4'b0001;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `AND: begin
                     reg_write_d <= 1'b1;
@@ -132,6 +137,7 @@ module Decode(
                     alu_control_d <= 4'b0010;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `OR: begin
                     reg_write_d <= 1'b1;
@@ -141,6 +147,7 @@ module Decode(
                     alu_control_d <= 4'b0011;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `NOR: begin
                     reg_write_d <= 1'b1;
@@ -150,6 +157,7 @@ module Decode(
                     alu_control_d <= 4'b0100;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `XOR: begin
                     reg_write_d <= 1'b1;
@@ -159,6 +167,7 @@ module Decode(
                     alu_control_d <= 4'b0101;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end     
                 `SLL: begin
                     if (inst[15:11] == 5'b0) begin
@@ -169,6 +178,7 @@ module Decode(
                         alu_control_d <= 4'b0000;
                         alu_src_d <= 2'b00;
                         reg_dst_d <= 1'b0;
+                        mem_access_d <= 1'b0;
                     end else begin
                         reg_write_d <= 1'b1;
                         mem_to_reg_d <= 1'b0;
@@ -177,6 +187,7 @@ module Decode(
                         alu_control_d <= 4'b0110;
                         alu_src_d <= 2'b01;
                         reg_dst_d <= 1'b1;
+                        mem_access_d <= 1'b0;
                     end
                 end
                 `SRA: begin
@@ -187,6 +198,7 @@ module Decode(
                     alu_control_d <= 4'b0111;
                     alu_src_d <= 2'b01;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `SRL: begin
                     reg_write_d <= 1'b1;
@@ -196,6 +208,7 @@ module Decode(
                     alu_control_d <= 4'b1000;
                     alu_src_d <= 2'b01;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `SLT: begin
                     reg_write_d <= 1'b1;
@@ -205,6 +218,7 @@ module Decode(
                     alu_control_d <= 4'b1001;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `SLTU: begin
                     reg_write_d <= 1'b1;
@@ -214,6 +228,7 @@ module Decode(
                     alu_control_d <= 4'b1010;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 `JR: begin
                     reg_write_d <= 1'b0;
@@ -223,6 +238,7 @@ module Decode(
                     alu_control_d <= 4'b1110;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b1;
+                    mem_access_d <= 1'b0;
                 end
                 default: begin
                 end
@@ -237,6 +253,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `ANDI: begin
                     reg_write_d <= 1'b1;
@@ -246,6 +263,7 @@ module Decode(
                     alu_control_d <= 4'b0010;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `ORI: begin
                     reg_write_d <= 1'b1;
@@ -255,6 +273,7 @@ module Decode(
                     alu_control_d <= 4'b0011;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `XORI: begin
                     reg_write_d <= 1'b1;
@@ -264,6 +283,7 @@ module Decode(
                     alu_control_d <= 4'b0101;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `SLTI: begin
                     reg_write_d <= 1'b1;
@@ -273,6 +293,7 @@ module Decode(
                     alu_control_d <= 4'b1001;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `SLTIU: begin
                     reg_write_d <= 1'b1;
@@ -282,6 +303,7 @@ module Decode(
                     alu_control_d <= 4'b1010;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `LUI: begin
                     reg_write_d <= 1'b1;
@@ -291,6 +313,7 @@ module Decode(
                     alu_control_d <= 4'b1011;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `BEQ: begin
                     reg_write_d <= 1'b0;
@@ -300,6 +323,7 @@ module Decode(
                     alu_control_d <= 4'b0001;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `BNE: begin
                     reg_write_d <= 1'b0;
@@ -309,6 +333,7 @@ module Decode(
                     alu_control_d <= 4'b0001;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `BGEZ: begin
                     reg_write_d <= 1'b0;
@@ -318,6 +343,7 @@ module Decode(
                     alu_control_d <= 4'b1110;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 `SW: begin
                     reg_write_d <= 1'b0;
@@ -327,6 +353,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b11;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b1;
                 end
                 `LW: begin
                     reg_write_d <= 1'b1;
@@ -336,6 +363,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b10;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b1;
                 end
                 `J: begin
                     reg_write_d <= 1'b0;
@@ -345,6 +373,7 @@ module Decode(
                     alu_control_d <= 4'b0000;
                     alu_src_d <= 2'b00;
                     reg_dst_d <= 1'b0;
+                    mem_access_d <= 1'b0;
                 end
                 default: begin
                     $display("[PC: %0x] instruction %0x not implemented. ", pc, inst);

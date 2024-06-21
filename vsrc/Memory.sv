@@ -3,6 +3,7 @@
 module Memory(
     input   logic   clk,
     input   logic   rst,
+    input   logic   mem_access_e,
     input   logic   reg_write_e,
     input   logic   mem_to_reg_e,
     input   logic   mem_write_e,
@@ -29,6 +30,7 @@ module Memory(
     logic branch_m;
     logic is_jump;
     logic branch_take;
+    logic mem_access_m;
 
     always_comb begin
         is_jump = (branch_type_e == 4'b0001) || (branch_type_e == 4'b0010) || (branch_type_e == 4'b0011);
@@ -61,6 +63,7 @@ module Memory(
             write_data_m <= 32'b0;
             write_reg_m <= 5'b0;
             zero_m <= 1'b0;
+            mem_access_m <= 1'b0;
         end else begin
             reg_write_m <= reg_write_e;
             mem_to_reg_m <= mem_to_reg_e;
@@ -70,6 +73,7 @@ module Memory(
             write_data_m <= write_data_e;
             write_reg_m <= write_reg_e;
             zero_m <= zero_e;
+            mem_access_m <= mem_access_e;
         end
     end
 
@@ -77,6 +81,7 @@ module Memory(
         .reset(rst),
         .clk(clk),
         .write_enabled(mem_write_m),
+        .valid(1),
         .addr(alu_out_m),
         .w_data(write_data_m),
         .r_data(read_data_m),

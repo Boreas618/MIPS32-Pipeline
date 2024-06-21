@@ -4,8 +4,9 @@ module DataMemory(
     input   logic   clk,
 
     /* Signals for memory access results. */
-    input   logic   write_enabled,
+    input   logic   valid,
     input   logic   [31:0] addr,
+    input   logic   write_enabled,
     input   logic   [31:0] w_data,
 
     /* Signals for memory access responses. */
@@ -35,7 +36,7 @@ module DataMemory(
         end else begin
             if (status == 2'b0) begin
                 status <= 2'b1;
-                cycle_counter <= 8'b0;
+                cycle_counter <= 8'b1;
             end else if (status == 2'b1) begin
                 if (cycle_counter == latency_cycles) begin
                     if (write_enabled) begin
