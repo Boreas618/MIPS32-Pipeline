@@ -1,6 +1,6 @@
 # MIPS32 Pipeline
 
-This is a 5-stage pipeline MIPS CPU. Documentation coming soon.
+A naive 5-stage pipeline MIPS CPU.
 
 ## Quick Start
 
