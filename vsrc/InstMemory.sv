@@ -1,4 +1,7 @@
 /* verilator lint_off UNUSEDSIGNAL */
+
+`include "Config.svh"
+
 module InstMemory(
     input   logic   clk,
     input   logic   rst,
@@ -16,7 +19,7 @@ module InstMemory(
      * Note that these constructs are used for simulating the memory
      * access latencies.
      */
-    parameter latency_cycles = 1;
+    parameter latency_cycles = `MEM_LATENCY;
     logic [7:0] cycle_counter;
 
     import "DPI-C" function void mm_read(

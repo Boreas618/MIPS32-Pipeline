@@ -1,9 +1,12 @@
 /* verilator lint_off UNUSEDSIGNAL */
+
+`include "Config.svh"
+
 module DataMemory(
     input   logic   reset,
     input   logic   clk,
 
-    /* Signals for memory access results. */
+    /* Signals for memory access requests. */
     input   logic   valid,
     input   logic   [31:0] addr,
     input   logic   write_enabled,
@@ -14,7 +17,7 @@ module DataMemory(
     output  logic   [1:0] status
 );
 
-    parameter latency_cycles = 10;
+    parameter latency_cycles = `MEM_LATENCY;
     logic [7:0] cycle_counter;
 
     import "DPI-C" function void mm_read(
@@ -45,12 +48,12 @@ module DataMemory(
                 status <= 2'b1;
                 cycle_counter <= 8'b1;
             end else if (status == 2'b1) begin
-                /*
-                 * The addrs and datas should be aligend to 64-bit due to
-                 * the specification of mm_write and mm_read. The upper half
-                 * are simply discarded. 
-                 */
                 if (cycle_counter == latency_cycles) begin
+                    /*
+                     * The addrs and datas should be aligend to 64-bit due to
+                     * the specification of mm_write and mm_read. The upper half
+                     * are simply discarded. 
+                     */
                     if (write_enabled) begin
                         logic [63:0] expanded_w_data = {32'b0, w_data};
                         mm_write(expanded_addr, expanded_w_data);
