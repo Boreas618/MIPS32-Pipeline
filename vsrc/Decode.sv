@@ -11,8 +11,8 @@ module Decode(
     input   logic   [4:0]write_reg,
     input   logic   [31:0]write_data,
     input   logic   write_enabled,
-    input   logic   branch_resume,
-    input   logic   dmem_resume,
+    input   logic   branch_continue,
+    input   logic   dmem_continue,
     output  logic   branch_stall,
     output  logic   dmem_stall,
     output  logic   reg_write_d,
@@ -54,7 +54,18 @@ module Decode(
         pc_plus_4d <= pc + 4;
         jump_addr_d <= {pc[31:28], inst[25:0], 2'b0};
 
-        if (branch_stall && branch_resume) begin
+        /*
+         * Branch Configurations.
+         *
+         * - If the incoming instruction involves branching (jump or conditional branch),
+         *   the decoder should determine its type, which will be used in the memory stage.
+         *   This is important because different types of instructions lead to different sources
+         *   for the next PC (e.g., jr vs j).
+         *
+         * - If the pipeline is stalled due to a previous branch instruction and the branch
+         *   is now resolved, the stall signal should be cleared.
+         */
+        if (branch_stall && branch_continue) begin
             branch_stall <= 1'b0;
         end else if (op == `BEQ || op == `BNE || op == `BGEZ || op == `J || op == `JAL || (op == `RTYPE && funct == `JR)) begin
             if (op == `J) begin
@@ -77,7 +88,11 @@ module Decode(
             branch_type_d <= 4'b0000;
         end
 
-        if (dmem_stall && dmem_resume) begin
+        /*
+         * Stall the pipeline on instructions involving memory operations.
+         */
+
+        if (dmem_stall && dmem_continue) begin
             dmem_stall <= 1'b0;
         end else if (op == `SW  || op == `LW) begin
             dmem_stall <= 1'b1;

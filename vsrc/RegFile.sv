@@ -36,6 +36,11 @@ module RegFile(
         end
     end
 
+    /*
+     * Our register file supports concurrent read and write operations.
+     * Data is forwarded if the read and write addresses are identical
+     * in a given cycle.
+     */
     always_ff @(posedge clk) begin
         if (write_enabled && write_addr == read_addr_1) begin
             data_1 <= write_data;

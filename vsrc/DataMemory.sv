@@ -30,6 +30,13 @@ module DataMemory(
     logic [63:0] expanded_addr = {32'b0, addr};
 
     always_ff @(posedge clk) begin
+        /*
+         * Status Code:
+         *
+         * - 00: Ready to issue read/write requests.
+         * - 01: Read/write requests being processed.
+         * - 10: Read/write requests completed.
+         */
         if (reset) begin
             status <= 2'b0;
             cycle_counter <= 8'b0;
@@ -38,6 +45,11 @@ module DataMemory(
                 status <= 2'b1;
                 cycle_counter <= 8'b1;
             end else if (status == 2'b1) begin
+                /*
+                 * The addrs and datas should be aligend to 64-bit due to
+                 * the specification of mm_write and mm_read. The upper half
+                 * are simply discarded. 
+                 */
                 if (cycle_counter == latency_cycles) begin
                     if (write_enabled) begin
                         logic [63:0] expanded_w_data = {32'b0, w_data};

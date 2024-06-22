@@ -1,6 +1,3 @@
-/* verilator lint_off UNUSEDSIGNAL */
-/* verilator lint_off SYNCASYNCNET */
-/* verilator lint_off UNDRIVEN */
 `include "Config.svh"
 
 module Top (
@@ -14,6 +11,14 @@ module Top (
     output	logic	[31:0] last_inst
 );
 
+    /*
+     * This block is for testing purposes. Test cases will return to `EXIT_ADDR`
+     * with the return value MAGIC (see Icode.svh) if they pass. Otherwise, they
+     * will return with the value -1, and the err signal will be asserted to
+     * indicate an issue to the test framework.
+     */
+    logic magic;
+
     always_comb begin
         if (pc == `EXIT_ADDR) begin
             halt = 1'b1;
@@ -24,18 +29,27 @@ module Top (
         end
     end
 
+    /*
+     * These signals relate to the stall and continuation of the pipeline. The
+     * pipeline stalls on branches (as we have yet to support branch prediction)
+     * and memory accesses (we simulate memory access latencies in InstMemory and
+     * DataMemory). The continuation of memory-related stalls is based on the
+     * status code, indicating the completion of memory accesses.
+     */
     logic branch_stall;
     logic imem_stall;
     logic dmem_stall;
-    logic branch_resume;
-    logic dmem_resume;
+    logic branch_continue;
+    logic dmem_continue;
     logic stall;
 
     assign imem_stall = ~(imem_status == 2'b10);
-    assign branch_resume = branch_e;
-    assign dmem_resume = dmem_status == 2'b10;
+    assign branch_continue = branch_e;
+    assign dmem_continue = dmem_status == 2'b10;
     assign stall = branch_stall || imem_stall || dmem_stall;
 
+
+    /* Hazard resolution unit. */
     logic forward_src_a_enabled;
     logic [31:0] forward_src_a;
     logic forward_src_b_enabled;
@@ -67,6 +81,7 @@ module Top (
      * `inst`: the current instruction with MIPS encoding specification.
      * `if_pc_src`: select the next PC.
      * `if_pc_branch_in`: the next PC provided by branch instructions.
+     * `imem_status`: the status code of the instruction memory.
      */
     logic [31:0] inst;
     logic [1:0] if_pc_src;
@@ -101,6 +116,14 @@ module Top (
         .r_data_status(imem_status)
     );
 
+    /*
+     * Instruction Decoding Stage.
+     *
+     * The `mem_access_d` signal indicates that the instruction being decoded
+     * involves memory operations (e.g., sw and lw). If this signal is asserted,
+     * the pipeline will stall.
+     */
+
     logic reg_write_d;
     logic mem_to_reg_d;
     logic mem_write_d;
@@ -108,7 +131,6 @@ module Top (
     logic [3:0]alu_control_d;
     logic [1:0]alu_src_d;
     logic reg_dst_d;
-    logic [31:0]debug;
     logic [31:0]rd1_d;
     logic [31:0]rd2_d;
     logic [4:0]rs_d;
@@ -120,7 +142,6 @@ module Top (
     logic [31:0]jump_addr_d;
     logic [3:0] branch_type_d;
     logic mem_access_d;
-    logic magic;
 
     Decode decode(
         .inst(inst),
@@ -147,14 +168,15 @@ module Top (
         .branch_stall(branch_stall),
         .dmem_stall(dmem_stall),
         .pc_plus_4d(pc_plus_4d),
-        .branch_resume(branch_resume),
-        .dmem_resume(dmem_resume),
+        .branch_continue(branch_continue),
+        .dmem_continue(dmem_continue),
         .jump_addr_d(jump_addr_d),
         .branch_type_d(branch_type_d),
         .magic(magic),
         .mem_access_d(mem_access_d)
     );
 
+    /* EX stage. */
     logic [31:0] alu_out_e;
     logic [31:0] write_data_e;
     logic [4:0] write_reg_e;
@@ -206,6 +228,7 @@ module Top (
         .mem_access_e(mem_access_e)
     );
 
+    /* MEM stage. */
     logic [31:0] read_data_m;
     logic [31:0] alu_out_m;
     logic reg_write_m;
@@ -255,12 +278,7 @@ module Top (
         .reg_write_w(reg_write_w)
     );
 
-    /* 
-     * Legacy Debug functionalities.
-     *
-     * Note that this part is planned to be removed in the future and
-     * switch to the DebugPort module.
-     */
+    /* Legacy Debug signals. */
     assign last_inst = inst;
     always @(posedge clk) begin
         if (rst) begin
@@ -270,12 +288,5 @@ module Top (
             system_counter <= system_counter + 32'd1;
         end
     end
-
-    wire write_enabled;
-    wire m_err;
-    wire [31:0] w_data;
-
-    assign write_enabled = 1'b0;
-    assign w_data = 32'b0;
 
 endmodule
