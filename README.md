@@ -4,7 +4,7 @@ A naive 5-stage pipeline MIPS CPU.
 
 ## Quick Start
 
-My hardware:
+Environment:
 
 ```shell
 $ uname -a
